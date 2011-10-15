@@ -4,13 +4,11 @@ int connect_serial(String serial_device_name) {
     println(serial_list);
 
     int serial_num = -1;
-    for(int i = 0; i < serial_list.length; i++){     
-//    for(int i = (serial_list.length - 1); i >= 0; i--){     
+    for(int i = (serial_list.length - 1); i >= 0; i--){     
         if (serial_list[i].contains(serial_device_name)) {
           serial_found = true;
           serial_num = i;
           myPort = new Serial(this, serial_list[serial_num], 57600);
-//          myPort = new Serial(this, serial_list[serial_num], 57600, 'N', 8, 1.0);
           myPort.buffer(1);
         }
     }    
