@@ -3,6 +3,8 @@
 
 import processing.serial.*;
 import controlP5.*;
+import ddf.minim.analysis.*;
+import ddf.minim.*;
 
 // CONSTANTS: message syntax constants
 byte MSG_END =           byte(128);
@@ -45,31 +47,42 @@ RadioButton scroll_radio_button;
  byte new_msg_input [] = new byte [3];
  boolean new_msg_input_flag = false;
  long last_switch;
- long switch_interval = 30;
+// long switch_interval = 30;
  boolean on_now = false;
 
-
+// audio freq analysis variables 
+  float [] freq_amp_offset_init = {1f,1f,1f,3f,6f,10f,18f,26f};
+  float freq_band_mult_init = 2.1;
+  int setup_band_freq_init = 60;
+  float freq_amplitude_range_init = 150f;
+  Freq_Bands freq_bands_obj;
 
 void setup () {
      // set the window size:
     size(400,400);
+    background(0);
+    
     connect_serial("/dev/tty.BlueJulio-M1");
 //    connect_serial("/dev/tty.usbserial-A");
     init_interface();
+
+    freq_bands_obj = new Freq_Bands(this,setup_band_freq_init, freq_band_mult_init);
+    freq_bands_obj.init_freq_bands_amp_offset(freq_amp_offset_init);
     
     last_switch = millis();
-    background(0);
 
     myPort.write(STATUS_MSG);
     
 }
 
 void draw () {
-  
+  freq_bands_obj.calculate_bands_amplitude();
+  freq_bands_obj.display_bands_as_circles();  
 }
 
 void stop () {
   myPort.stop();  
+  freq_bands_obj.stop();
   super.stop();  
 }
 
