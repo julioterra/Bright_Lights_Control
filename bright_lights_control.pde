@@ -53,7 +53,7 @@ RadioButton scroll_radio_button;
 void setup () {
      // set the window size:
     size(400,400);
-    connect_serial("/dev/tty.BlueJulio-M1-SPP");
+    connect_serial("/dev/tty.BlueJulio-M1");
 //    connect_serial("/dev/tty.usbserial-A");
     init_interface();
     
@@ -69,7 +69,6 @@ void draw () {
 }
 
 void stop () {
-//  send_serial_msg(MODE_MSG_off, convert_array_int_to_byte_full(hsb_msg));
   myPort.stop();  
   super.stop();  
 }
