@@ -46,6 +46,7 @@ void controlEvent(ControlEvent theEvent) {
                 if (check_array_state_change(hsb_msg, previous_hsb_msg)) {
                     previous_hsb_msg = update_previous_array(hsb_msg, previous_hsb_msg);
                     send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
+                    set_base_color_hsb(1000, hsb_msg[0],hsb_msg[1],hsb_msg[2]);
                 }
 
         }
@@ -54,6 +55,7 @@ void controlEvent(ControlEvent theEvent) {
                 if (check_array_state_change(hsb_msg, previous_hsb_msg)) {
                     previous_hsb_msg = update_previous_array(hsb_msg, previous_hsb_msg);
                     send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
+                    set_base_color_hsb(1000, hsb_msg[0],hsb_msg[1],hsb_msg[2]);
                 }
 
         }
@@ -62,6 +64,7 @@ void controlEvent(ControlEvent theEvent) {
                 if (check_array_state_change(hsb_msg, previous_hsb_msg)) {
                     previous_hsb_msg = update_previous_array(hsb_msg, previous_hsb_msg);
                     send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
+                    set_base_color_hsb(1000, hsb_msg[0],hsb_msg[1],hsb_msg[2]);
                 }
 
         }
@@ -142,5 +145,12 @@ void send_serial_msg(byte msg_type, byte[] msg_body) {
     myPort.write(MSG_END);
 }
 
+void send_serial_msg_arraylist(byte msg_type, ArrayList<Byte> msg_body) {
+    myPort.write(msg_type);
+    for(int i = 0; i < msg_body.size(); i++) {
+        myPort.write(msg_body.get(i));
+    }
+    myPort.write(MSG_END);
+}
 
 
