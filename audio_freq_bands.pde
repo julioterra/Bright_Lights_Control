@@ -8,7 +8,9 @@ class Freq_Bands {
     float freq_band_mult = 0;
     int setup_band_freq = 0;
     float freq_amplitude_range = 0;
-    int band_width_display = 0;
+    PVector display_position;
+    PVector display_size;
+    int display_bandwidth = 0;
     
     color rgb_base_color = color (255, 255, 255);
     int display_mode = 1;
@@ -32,20 +34,30 @@ class Freq_Bands {
         // initialize the freq_bands array  
         setup_band_freq = _setup_band_freq; 
         freq_band_mult = _freq_band_mult;
-        init_freq_bands_array();
-      
+        init_freq_bands_array(_setup_band_freq, _freq_band_mult);      
         set_amplitude_range(150f);  
     }  
 
-    void init_freq_bands_array() {
+    void init_freq_bands_array(int _setup_band_freq, float _freq_band_mult) {
+        
          // initialize the freq bands based on starting setup_band_freq and freq_band_mult 
         for (float end_freq = setup_band_freq; end_freq < audio_input.sampleRate() / 2; end_freq = end_freq * freq_band_mult) {
            println ("end frequency #" + freq_bands.size() + ": " + int(end_freq));
           freq_bands.add(int(end_freq));
           freq_bands_amp.add(0f);
         }
-        band_width_display = width / freq_bands.size();
+//        display_bandwidth = width / freq_bands.size();
     }
+
+    void init_freq_bands_pos(int posx, int posy) {
+        display_position = new PVector (posx, posy);  
+    }
+
+    void init_freq_bands_size(int sizex, int sizey) {
+        display_size = new PVector (sizex, sizey);  
+        display_bandwidth = int(display_size.x / freq_bands.size());
+    }
+    
     
     void init_freq_bands_amp_offset(float [] _freq_amp_offset) {
         freq_bands_amp_offset = new ArrayList<Float>();
@@ -100,9 +112,9 @@ class Freq_Bands {
       fill(color(255,0,0));
       smooth();
       for(int i = 0; i < freq_bands.size(); i++)  {
-        int x_loc = i * band_width_display;
+        int x_loc = i * display_bandwidth;
         float freq_amplitude = freq_bands_amp.get(i)*height;
-        rect(x_loc, height - freq_amplitude, band_width_display, freq_amplitude);
+        rect(x_loc, height - freq_amplitude, display_bandwidth, freq_amplitude);
       }
     }
     
@@ -118,8 +130,8 @@ class Freq_Bands {
                 int index_offset = i * 3;
                 float freq_amplitude = float(temp_bytes.get(index_offset))/127f;
                 
-                int x_loc = (i * band_width_display) + (band_width_display/2);
-                ellipse(x_loc, height/2, freq_amplitude*band_width_display, freq_amplitude*band_width_display);
+                int x_loc = (int)(display_position.x + (i * display_bandwidth) + (display_bandwidth/2));
+                ellipse(x_loc, display_position.y, freq_amplitude*display_bandwidth, freq_amplitude*display_bandwidth);
             }  
         } 
         else if (display_mode == 1) {
@@ -132,8 +144,8 @@ class Freq_Bands {
                 
                 color temp_color = color(temp_red,temp_green,temp_blue);
                 fill(temp_color);  
-                int x_loc = (i * band_width_display) + (band_width_display/2);
-                ellipse(x_loc, height/2, band_width_display, band_width_display);
+                int x_loc = (int)(display_position.x + (i * display_bandwidth) + (display_bandwidth/2));
+                ellipse(x_loc, display_position.y, display_bandwidth, display_bandwidth);
             }  
         }
     }

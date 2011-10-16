@@ -45,8 +45,9 @@ void controlEvent(ControlEvent theEvent) {
                 hsb_msg[0] = int(theEvent.controller().value());
                 if (check_array_state_change(hsb_msg, previous_hsb_msg)) {
                     previous_hsb_msg = update_previous_array(hsb_msg, previous_hsb_msg);
-                    send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
-                    set_base_color_hsb(1000, hsb_msg[0],hsb_msg[1],hsb_msg[2]);
+                    if (slider_range != 127) send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
+                    else send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte(hsb_msg));
+                    freq_bands_obj.set_base_color_hsb(slider_range, hsb_msg[0],hsb_msg[1],hsb_msg[2]);
                 }
 
         }
@@ -55,7 +56,9 @@ void controlEvent(ControlEvent theEvent) {
                 if (check_array_state_change(hsb_msg, previous_hsb_msg)) {
                     previous_hsb_msg = update_previous_array(hsb_msg, previous_hsb_msg);
                     send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
-                    set_base_color_hsb(1000, hsb_msg[0],hsb_msg[1],hsb_msg[2]);
+                    if (slider_range != 127) send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
+                    else send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte(hsb_msg));
+                    freq_bands_obj.set_base_color_hsb(slider_range, hsb_msg[0],hsb_msg[1],hsb_msg[2]);
                 }
 
         }
@@ -64,7 +67,9 @@ void controlEvent(ControlEvent theEvent) {
                 if (check_array_state_change(hsb_msg, previous_hsb_msg)) {
                     previous_hsb_msg = update_previous_array(hsb_msg, previous_hsb_msg);
                     send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
-                    set_base_color_hsb(1000, hsb_msg[0],hsb_msg[1],hsb_msg[2]);
+                    if (slider_range != 127) send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
+                    else send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte(hsb_msg));
+                    freq_bands_obj.set_base_color_hsb(slider_range, hsb_msg[0],hsb_msg[1],hsb_msg[2]);
                 }
 
         }

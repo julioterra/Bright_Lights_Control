@@ -29,9 +29,9 @@ void init_interface() {
   int hsb_slider_x = 20;
   int hsb_slider_y = 100;
   int hsb_space_y = 20;
-  controlP5.addSlider("hue_slider",      0,1000,0,hsb_slider_x,hsb_slider_y,200,10);
-  controlP5.addSlider("sat_slider",      0,1000,0,hsb_slider_x,hsb_slider_y+(hsb_space_y*1),200,10);
-  controlP5.addSlider("bright_slider",   0,1000,0,hsb_slider_x,hsb_slider_y+(hsb_space_y*2),200,10);
+  controlP5.addSlider("hue_slider",      0,slider_range,0,hsb_slider_x,hsb_slider_y,200,10);
+  controlP5.addSlider("sat_slider",      0,slider_range,0,hsb_slider_x,hsb_slider_y+(hsb_space_y*1),200,10);
+  controlP5.addSlider("bright_slider",   0,slider_range,0,hsb_slider_x,hsb_slider_y+(hsb_space_y*2),200,10);
 
 
   /********************

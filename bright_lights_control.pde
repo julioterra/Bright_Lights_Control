@@ -42,6 +42,9 @@ Serial myPort;
     int strobe_msg[] = {0};
     int previous_strobe_msg[] = {0};
 
+    // slider range
+    int slider_range = 1000;
+
 // audio freq analysis variables 
     float freq_band_mult_init = 2.1;
     int setup_band_freq_init = 60;
@@ -52,7 +55,7 @@ Serial myPort;
 
 void setup () {
      // set the window size:
-    size(400,400);
+    size(600,400);
     background(0);
     
     connect_serial("/dev/tty.BlueJulio-M1");
@@ -61,7 +64,8 @@ void setup () {
 
     freq_bands_obj = new Freq_Bands(this,setup_band_freq_init, freq_band_mult_init);
     freq_bands_obj.init_freq_bands_amp_offset(freq_amp_offset_init);
-    
+    freq_bands_obj.init_freq_bands_pos(50, height/2);
+    freq_bands_obj.init_freq_bands_size(width-100, 200);    
     myPort.write(STATUS_MSG);
 }
 
@@ -76,8 +80,11 @@ void draw () {
 }
 
 void stop () {
+  println("getting ready to close shop.");
   myPort.stop();  
+  println("closed serial.");
   freq_bands_obj.stop();
+  println("closed minim.");
   super.stop();  
 }
 
