@@ -1,3 +1,5 @@
+import processing.opengl.*;
+
 // slow bluetooth
 // confirm that controls are always working
 
@@ -18,6 +20,8 @@ byte SET_MSG_hsb =       byte(129);
 byte MODE_MSG_color_hsb = byte(192);
 byte MODE_MSG_scroll =   byte(193);
 byte MODE_MSG_strobe =   byte(194);
+
+int mode_realtime = int(4);
 
 // Serial port object
 Serial myPort;
@@ -55,7 +59,7 @@ Serial myPort;
 
 void setup () {
      // set the window size:
-    size(600,400);
+    size(600,500);
     background(0);
     
     connect_serial("/dev/tty.BlueJulio-M1");
@@ -64,8 +68,8 @@ void setup () {
 
     freq_bands_obj = new Freq_Bands(this,setup_band_freq_init, freq_band_mult_init);
     freq_bands_obj.init_freq_bands_amp_offset(freq_amp_offset_init);
-    freq_bands_obj.init_freq_bands_pos(50, height/2);
-    freq_bands_obj.init_freq_bands_size(width-100, 200);    
+    freq_bands_obj.init_freq_bands_pos(50, height-100);
+    freq_bands_obj.init_freq_bands_size(300, 150);    
     myPort.write(STATUS_MSG);
 }
 

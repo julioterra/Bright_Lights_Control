@@ -27,7 +27,7 @@ void read_serial_bytes(byte _new_byte) {
 void parse_serial_msg(byte _msg_type, ArrayList<Byte> _msg_body) {
 
     // this is a status message and the size is 21 without the header byte
-    if (_msg_type == STATUS_MSG && _msg_body.size() >= 20) {
+    if (_msg_type == STATUS_MSG && _msg_body.size() >= 20 && interaction_mode != mode_realtime) {
         int current_index = 0;
         byte[] temp_bytes = {0,0,0};
 
