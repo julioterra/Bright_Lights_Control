@@ -44,32 +44,37 @@ void controlEvent(ControlEvent theEvent) {
         if (theEvent.controller().name().equals("hue_slider")) {
                 hsb_msg[0] = int(theEvent.controller().value());
                 if (check_array_state_change(hsb_msg, previous_hsb_msg)) {
-                    previous_hsb_msg = update_previous_array(hsb_msg, previous_hsb_msg);
-                    if (slider_range != 127) send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
-                    else send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte(hsb_msg));
                     freq_bands_obj.set_base_color_hsb(slider_range, hsb_msg[0],hsb_msg[1],hsb_msg[2]);
+                    if (interaction_mode != mode_realtime) {
+                    println("sending HSB msg");
+                        previous_hsb_msg = update_previous_array(hsb_msg, previous_hsb_msg);
+                        if (slider_range != 127) send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
+                        else send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte(hsb_msg));
+                    }
                 }
 
         }
         else if (theEvent.controller().name().equals("sat_slider")) {
                 hsb_msg[1] = int(theEvent.controller().value());
                 if (check_array_state_change(hsb_msg, previous_hsb_msg)) {
-                    previous_hsb_msg = update_previous_array(hsb_msg, previous_hsb_msg);
-                    send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
-                    if (slider_range != 127) send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
-                    else send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte(hsb_msg));
                     freq_bands_obj.set_base_color_hsb(slider_range, hsb_msg[0],hsb_msg[1],hsb_msg[2]);
+                    if (interaction_mode != mode_realtime) {
+                        previous_hsb_msg = update_previous_array(hsb_msg, previous_hsb_msg);
+                        if (slider_range != 127) send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
+                        else send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte(hsb_msg));
+                    }
                 }
 
         }
         else if (theEvent.controller().name().equals("bright_slider")) {
                 hsb_msg[2] = int(theEvent.controller().value());
                 if (check_array_state_change(hsb_msg, previous_hsb_msg)) {
-                    previous_hsb_msg = update_previous_array(hsb_msg, previous_hsb_msg);
-                    send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
-                    if (slider_range != 127) send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
-                    else send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte(hsb_msg));
                     freq_bands_obj.set_base_color_hsb(slider_range, hsb_msg[0],hsb_msg[1],hsb_msg[2]);
+                    if (interaction_mode != mode_realtime) {
+                        previous_hsb_msg = update_previous_array(hsb_msg, previous_hsb_msg);
+                        if (slider_range != 127) send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
+                        else send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte(hsb_msg));
+                    }
                 }
 
         }
@@ -153,7 +158,9 @@ void send_serial_msg(byte msg_type, byte[] msg_body) {
 void send_serial_msg_arraylist(byte msg_type, ArrayList<Byte> msg_body) {
     myPort.write(msg_type);
     for(int i = 0; i < msg_body.size(); i++) {
-        myPort.write(msg_body.get(i));
+        byte current_byte = msg_body.get(i);
+        if (current_byte > 127) println("** realtime msg issue, byte value: " + int (current_byte));
+        myPort.write(current_byte);
     }
     myPort.write(MSG_END);
 }
