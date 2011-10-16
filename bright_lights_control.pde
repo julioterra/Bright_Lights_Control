@@ -23,9 +23,9 @@ byte MODE_MSG_strobe =   byte(194);
 Serial myPort;
 
 // Interface control objects
-ControlP5 controlP5;
-RadioButton mode_radio_button;
-RadioButton scroll_radio_button;
+    ControlP5 controlP5;
+    RadioButton mode_radio_button;
+    RadioButton scroll_radio_button;
 
 // Interface state message variables
     int interaction_mode = 0;
@@ -42,20 +42,13 @@ RadioButton scroll_radio_button;
     int strobe_msg[] = {0};
     int previous_strobe_msg[] = {0};
 
-// test variables
- int msg_count_input = 0;
- byte new_msg_input [] = new byte [3];
- boolean new_msg_input_flag = false;
- long last_switch;
-// long switch_interval = 30;
- boolean on_now = false;
-
 // audio freq analysis variables 
-  float [] freq_amp_offset_init = {1f,1f,1f,3f,6f,10f,18f,26f};
-  float freq_band_mult_init = 2.1;
-  int setup_band_freq_init = 60;
-  float freq_amplitude_range_init = 150f;
-  Freq_Bands freq_bands_obj;
+    float freq_band_mult_init = 2.1;
+    int setup_band_freq_init = 60;
+    float freq_amplitude_range_init = 150f;
+    float [] freq_amp_offset_init = {1f,1f,1f,3f,6f,10f,18f,26f};
+    Freq_Bands freq_bands_obj;
+
 
 void setup () {
      // set the window size:
@@ -69,15 +62,17 @@ void setup () {
     freq_bands_obj = new Freq_Bands(this,setup_band_freq_init, freq_band_mult_init);
     freq_bands_obj.init_freq_bands_amp_offset(freq_amp_offset_init);
     
-    last_switch = millis();
-
     myPort.write(STATUS_MSG);
-    
 }
 
 void draw () {
-  freq_bands_obj.calculate_bands_amplitude();
-  freq_bands_obj.display_bands_as_circles();  
+    freq_bands_obj.calculate_bands_amplitude();
+    freq_bands_obj.display_bands_as_circles();  
+    
+    if(interaction_mode == 4) {
+        ArrayList<Byte> realtime_msg = freq_bands_obj.get_led_vals_active_display_mode();  
+        send_serial_msg_arraylist(MODE_MSG_realtime, realtime_msg);
+    }
 }
 
 void stop () {
@@ -107,5 +102,9 @@ void serialEvent(Serial myPort) {
              read_serial_bytes(new_byte);
          }
      }
+}
+
+void keyPressed() {
+    freq_bands_obj.toggle_display_mode();
 }
 

@@ -63,6 +63,11 @@ class Freq_Bands {
         colorMode(RGB);
         rgb_base_color = color (r, g, b);
     }
+
+    void set_base_color_hsb(int range, int h, int s, int b) {
+        colorMode(HSB, range, range, range);
+        rgb_base_color = color (h, s, b);
+    }
     
     void set_base_color(color _color) {
         rgb_base_color = _color;
@@ -140,7 +145,16 @@ class Freq_Bands {
        }
        return freq_bands_float;
     }
-    
+
+    void toggle_display_mode() {
+        if (display_mode == 0)  display_mode = 1;
+        else display_mode = 0;  
+    }
+
+    ArrayList<Byte> get_led_vals_active_display_mode() {
+        if (display_mode == 0) return get_led_vals_amp2bright();
+        else return get_led_vals_amp2color(); 
+    }
     ArrayList<Byte> get_led_vals_amp2bright() {
        ArrayList<Byte> led_bytes = new ArrayList<Byte>();
        for (int i = 0; i < freq_bands_amp.size() ; i ++) {
