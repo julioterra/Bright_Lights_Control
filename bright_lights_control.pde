@@ -22,12 +22,15 @@ byte MODE_MSG_scroll =   byte(193);
 byte MODE_MSG_strobe =   byte(194);
 
 int mode_realtime = int(4);
+boolean lights_on = false;
 
 // Serial port object
 Serial myPort;
+boolean serial_connected = false;
 
 // Interface control objects
     ControlP5 controlP5;
+    RadioButton on_radio_button;
     RadioButton mode_radio_button;
     RadioButton scroll_radio_button;
 
@@ -50,43 +53,54 @@ Serial myPort;
     int slider_range = 1000;
 
 // audio freq analysis variables 
-    float freq_band_mult_init = 2.1;
-    int setup_band_freq_init = 60;
-    float freq_amplitude_range_init = 150f;
-    float [] freq_amp_offset_init = {1f,1f,1f,3f,6f,10f,18f,26f};
+    float freq_band_mult_init = 2.5;
+    int setup_band_freq_init = 20;
+//    float freq_amplitude_range_init =150f;
+    float [] freq_amp_offset_init = {1f,1f,1f,3f,5f,8f,14f,20f};
     Freq_Bands freq_bands_obj;
+    Display_Box display_box_obj;
 
 
 void setup () {
      // set the window size:
-    size(900,500);
+    size(900,350);
     background(0);
     
-    connect_serial("/dev/tty.BlueJulio-M1");
-//    connect_serial("/dev/tty.usbserial-A");
+    serial_connected = connect_serial("/dev/tty.BlueJulio-M1");
+//    serial_connected = connect_serial("/dev/tty.usbserial-A");
+
     init_interface();
 
     freq_bands_obj = new Freq_Bands(this,setup_band_freq_init, freq_band_mult_init);
     freq_bands_obj.init_freq_bands_amp_offset(freq_amp_offset_init);
-    freq_bands_obj.init_freq_bands_size(600, 250);    
-    freq_bands_obj.init_freq_bands_pos(100, height-100);
-    myPort.write(STATUS_MSG);
+    
+    display_box_obj = new Display_Box(this, freq_bands_obj);    
+    display_box_obj.init_size(600, 250);    
+    display_box_obj.init_pos(100, 140);
+    
+    freq_bands_obj.init_connect_display_link(display_box_obj);
+    
+    if (serial_connected) myPort.write(STATUS_MSG);
 }
 
 void draw () {
-    freq_bands_obj.calculate_bands_amplitude();
-    freq_bands_obj.display_bands_as_circles();  
+    display_box_obj.display_box();
     
     if(interaction_mode == 4) {
-        ArrayList<Byte> realtime_msg = freq_bands_obj.get_led_vals_active_display_mode();  
+        ArrayList<Byte> realtime_msg = freq_bands_obj.calculate_bands_amplitude();  
         send_serial_msg_arraylist(MODE_MSG_realtime, realtime_msg);
+    }
+    else if(interaction_mode == 5) {
+        freq_bands_obj.calculate_bands_amplitude();  
     }
 }
 
 void stop () {
   println("getting ready to close shop.");
-  myPort.stop();  
-  println("closed serial.");
+  if (serial_connected) {
+      myPort.stop();  
+      println("closed serial.");
+  }
   freq_bands_obj.stop();
   println("closed minim.");
   super.stop();  
@@ -116,6 +130,6 @@ void serialEvent(Serial myPort) {
 }
 
 void keyPressed() {
-    freq_bands_obj.toggle_display_mode();
+    freq_bands_obj.toggle_realtime_mode();
 }
 
