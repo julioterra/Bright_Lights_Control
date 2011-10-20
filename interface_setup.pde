@@ -18,7 +18,7 @@ void init_interface() {
   on_radio_button.setColorLabel(color(255));
   on_radio_button.setItemsPerRow(1);
   on_radio_button.setSpacingColumn(50);
-  mode_radio_button.setNoneSelectedAllowed(false);
+  on_radio_button.setNoneSelectedAllowed(false);
 
   addToRadioButton(on_radio_button,"on",0, 80, 46);
   addToRadioButton(on_radio_button,"off",1, 80, 46);
