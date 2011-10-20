@@ -7,12 +7,18 @@ void init_interface() {
   PVector mode_specific_controls = new PVector(control_origin.x,control_origin.y+200);
  
   PVector on_origin = new PVector(transport_controls.x,transport_controls.y);
+
+  /********************
+    ON/OFF RADIO BUTTON SET-UP
+    create the radio buttons to select on and off
+    */
   on_radio_button = controlP5.addRadioButton("onOffRadioButton", (int)on_origin.x, (int)on_origin.y);
   on_radio_button.setColorForeground(color(120));
   on_radio_button.setColorActive(color(255));
   on_radio_button.setColorLabel(color(255));
   on_radio_button.setItemsPerRow(1);
   on_radio_button.setSpacingColumn(50);
+  mode_radio_button.setNoneSelectedAllowed(false);
 
   addToRadioButton(on_radio_button,"on",0, 80, 46);
   addToRadioButton(on_radio_button,"off",1, 80, 46);
@@ -31,6 +37,7 @@ void init_interface() {
   mode_radio_button.setItemsPerRow(5);
   mode_radio_button.setSpacingColumn(50);
   mode_radio_button.setNoneSelectedAllowed(false);
+
   // add radion button elements to each 
   addToRadioButton(mode_radio_button,"standard",1, 80, 46);
   addToRadioButton(mode_radio_button,"strobe",2, 80, 46);
