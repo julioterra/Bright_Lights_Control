@@ -7,10 +7,14 @@ class User_Interface {
     
     PApplet processing_app;
     Serial myPort; 
+    Physical_Devices_Output physical_output;
+    Freq_Bands freq_bands_obj;
 
-  User_Interface(PApplet _processing_app, Serial _myPort) {
+  User_Interface(PApplet _processing_app, Physical_Devices_Output _physical_output, Freq_Bands _freq_bands_obj) {
       processing_app = _processing_app;
-      myPort = _myPort;
+      physical_output = _physical_output;
+      freq_bands_obj = _freq_bands_obj;
+//      myPort = _myPort;
       controlP5 = new ControlP5(processing_app);
     
       PVector control_origin = new PVector(20,20);
@@ -125,7 +129,7 @@ class User_Interface {
                         break;
                     case 1: 
                         lights_on = false;
-                        send_serial_msg(MODE_MSG_off, convert_array_int_to_byte_full(hsb_msg));
+                        physical_output.send_serial_msg(MODE_MSG_off, convert_array_int_to_byte_full(hsb_msg));
                         break;
                 }
             }
@@ -139,20 +143,20 @@ class User_Interface {
             if (lights_on && (theEvent.group().name() == "onOffRadioButton" || theEvent.group().name() == "modeRadioButton")) { 
                 switch (interaction_mode) {
                     case 0:  
-                        send_serial_msg(MODE_MSG_off, convert_array_int_to_byte_full(hsb_msg));
+                        physical_output.send_serial_msg(MODE_MSG_off, convert_array_int_to_byte_full(hsb_msg));
                         break;
                     case 1:  
-                        send_serial_msg(MODE_MSG_color_hsb, convert_array_int_to_byte_full(hsb_msg));
+                        physical_output.send_serial_msg(MODE_MSG_color_hsb, convert_array_int_to_byte_full(hsb_msg));
                         break;
                     case 2:
-                        send_serial_msg(MODE_MSG_strobe, convert_array_int_to_byte(strobe_msg));
+                        physical_output.send_serial_msg(MODE_MSG_strobe, convert_array_int_to_byte(strobe_msg));
                         break;
                     case 3:
-                        send_serial_msg(MODE_MSG_scroll, convert_array_int_to_byte(scroll_msg));
+                        physical_output.send_serial_msg(MODE_MSG_scroll, convert_array_int_to_byte(scroll_msg));
                         break;
                     case 4:
                         byte empty_array[] = {byte(0),MSG_END};
-                        send_serial_msg(MODE_MSG_realtime, empty_array);
+                        physical_output.send_serial_msg(MODE_MSG_realtime, empty_array);
                         break;
                     default:
                         break;
@@ -165,7 +169,7 @@ class User_Interface {
                   scroll_msg[1] = int(theEvent.group().value());
                   display_box_obj.set_scroll(127, scroll_msg[0], scroll_msg[1], scroll_msg[2]);
                   if (interaction_mode == 3) {
-                      send_serial_msg(MODE_MSG_scroll, convert_array_int_to_byte(scroll_msg));
+                      physical_output.send_serial_msg(MODE_MSG_scroll, convert_array_int_to_byte(scroll_msg));
                       
                   }
             }
@@ -181,8 +185,8 @@ class User_Interface {
                     if (lights_on && interaction_mode != mode_realtime) {
                     println("sending HSB msg");
                         previous_hsb_msg = update_previous_array(hsb_msg, previous_hsb_msg);
-                        if (slider_range != 127) send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
-                        else send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte(hsb_msg));
+                        if (slider_range != 127) physical_output.send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
+                        else physical_output.send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte(hsb_msg));
                     }
                 }
             }
@@ -193,8 +197,8 @@ class User_Interface {
                     freq_bands_obj.set_base_color_hsb(slider_range, hsb_msg[0],hsb_msg[1],hsb_msg[2]);
                     if (lights_on && interaction_mode != mode_realtime) {
                         previous_hsb_msg = update_previous_array(hsb_msg, previous_hsb_msg);
-                        if (slider_range != 127) send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
-                        else send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte(hsb_msg));
+                        if (slider_range != 127) physical_output.send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
+                        else physical_output.send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte(hsb_msg));
                     }
                 }
             }
@@ -205,8 +209,8 @@ class User_Interface {
                     freq_bands_obj.set_base_color_hsb(slider_range, hsb_msg[0],hsb_msg[1],hsb_msg[2]);
                     if (lights_on && interaction_mode != mode_realtime) {
                         previous_hsb_msg = update_previous_array(hsb_msg, previous_hsb_msg);
-                        if (slider_range != 127) send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
-                        else send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte(hsb_msg));
+                        if (slider_range != 127) physical_output.send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
+                        else physical_output.send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte(hsb_msg));
                     }
                 }
             }
@@ -217,7 +221,7 @@ class User_Interface {
                     if (lights_on && interaction_mode == 2) {
                         display_box_obj.set_strobe(127, strobe_msg[0]);
                         previous_strobe_msg = update_previous_array(strobe_msg, previous_strobe_msg);
-                        send_serial_msg(MODE_MSG_strobe, convert_array_int_to_byte(strobe_msg));
+                        physical_output.send_serial_msg(MODE_MSG_strobe, convert_array_int_to_byte(strobe_msg));
                     }
                 }
             }
@@ -228,7 +232,7 @@ class User_Interface {
                     if (lights_on && interaction_mode == 3) {
                         display_box_obj.set_scroll(127, scroll_msg[0], scroll_msg[1], scroll_msg[2]);
                         previous_scroll_msg = update_previous_array(scroll_msg, previous_scroll_msg);
-                        send_serial_msg(MODE_MSG_scroll, convert_array_int_to_byte(scroll_msg));
+                        physical_output.send_serial_msg(MODE_MSG_scroll, convert_array_int_to_byte(scroll_msg));
                     }
                 }
             }
@@ -239,7 +243,7 @@ class User_Interface {
                     if (lights_on && interaction_mode == 3) {
                         display_box_obj.set_scroll(127, scroll_msg[0], scroll_msg[1], scroll_msg[2]);
                         previous_scroll_msg = update_previous_array(scroll_msg, previous_scroll_msg);
-                        send_serial_msg(MODE_MSG_scroll, convert_array_int_to_byte(scroll_msg));
+                        physical_output.send_serial_msg(MODE_MSG_scroll, convert_array_int_to_byte(scroll_msg));
                     }
                 }
             }
@@ -281,29 +285,6 @@ class User_Interface {
             }
         }
         return new_byte_msg;
-    }
-    
-    
-    void send_serial_msg(byte msg_type, byte[] msg_body) {
-        if (serial_connected) {
-            myPort.write(msg_type);
-            for(int i = 0; i < msg_body.length; i++) {
-                myPort.write(msg_body[i]);
-            }
-            myPort.write(MSG_END);
-        }
-    }
-    
-    void send_serial_msg_arraylist(byte msg_type, ArrayList<Byte> msg_body) {
-        if (serial_connected) {
-            myPort.write(msg_type);
-            for(int i = 0; i < msg_body.size(); i++) {
-                byte current_byte = msg_body.get(i);
-                if (current_byte > 127) println("** realtime msg issue, byte value: " + int (current_byte));
-                myPort.write(current_byte);
-            }
-            myPort.write(MSG_END);
-        }
     }
 
 }

@@ -35,6 +35,7 @@ boolean serial_connected = false;
     RadioButton scroll_radio_button;
 
     User_Interface user_interface;
+    Physical_Devices_Output physical_output;
 
 // Interface state message variables
     int interaction_mode = 0;
@@ -63,18 +64,24 @@ boolean serial_connected = false;
     Display_Box display_box_obj;
 
 
+
+
 void setup () {
      // set the window size:
     size(900,350);
     background(0);
     
-    serial_connected = connect_serial("/dev/tty.BlueJulio-M1");
+    physical_output = new Physical_Devices_Output(this);
+    myPort = physical_output.connect_serial("/dev/tty.BlueJulio-M1");
+    serial_connected = physical_output.connected();
 //    serial_connected = connect_serial("/dev/tty.usbserial-A");
 
 //    init_interface();
-    user_interface = new User_Interface(this, myPort);
+    
     freq_bands_obj = new Freq_Bands(this,setup_band_freq_init, freq_band_mult_init);
     freq_bands_obj.init_freq_bands_amp_offset(freq_amp_offset_init);
+
+    user_interface = new User_Interface(this, physical_output, freq_bands_obj);
     
     display_box_obj = new Display_Box(this, freq_bands_obj);    
     display_box_obj.init_size(600, 250);    
@@ -90,7 +97,7 @@ void draw () {
     
     if(interaction_mode == 4) {
         ArrayList<Byte> realtime_msg = freq_bands_obj.calculate_bands_amplitude();  
-        user_interface.send_serial_msg_arraylist(MODE_MSG_realtime, realtime_msg);
+        physical_output.send_serial_msg_arraylist(MODE_MSG_realtime, realtime_msg);
     }
     else if(interaction_mode == 5) {
         freq_bands_obj.calculate_bands_amplitude();  
@@ -108,36 +115,17 @@ void stop () {
   super.stop();  
 }
 
-boolean connection_established = false;
-boolean reading_msg_flag = false;
-byte msg_type = 0;
-ArrayList<Byte> msg_body;
 
 void controlEvent(ControlEvent theEvent) {
     user_interface.controlEvent(theEvent); 
 }
 
-
-
-void serialEvent(Serial myPort) {
-    connection_established = true;
-    while (myPort.available() > 0) {
-         byte new_byte = byte(myPort.read());
-          
-         if (new_byte == CONNECT_CONFIRM) {
-             myPort.write(STATUS_MSG);
-             msg_body = new ArrayList<Byte>();
-             println("\nstatus requested");
-         } 
-
-         if (connection_established) {
-             print(int(new_byte) + ", ");
-             read_serial_bytes(new_byte);
-         }
-    }
+void serialEvent(Serial newPort) {
+    physical_output.serialEvent(newPort);
 }
 
 void keyPressed() {
     freq_bands_obj.toggle_realtime_mode();
 }
+
 
