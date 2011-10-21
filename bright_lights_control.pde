@@ -34,6 +34,8 @@ boolean serial_connected = false;
     RadioButton mode_radio_button;
     RadioButton scroll_radio_button;
 
+    User_Interface user_interface;
+
 // Interface state message variables
     int interaction_mode = 0;
     
@@ -69,8 +71,8 @@ void setup () {
     serial_connected = connect_serial("/dev/tty.BlueJulio-M1");
 //    serial_connected = connect_serial("/dev/tty.usbserial-A");
 
-    init_interface();
-
+//    init_interface();
+    user_interface = new User_Interface(this, myPort);
     freq_bands_obj = new Freq_Bands(this,setup_band_freq_init, freq_band_mult_init);
     freq_bands_obj.init_freq_bands_amp_offset(freq_amp_offset_init);
     
@@ -88,7 +90,7 @@ void draw () {
     
     if(interaction_mode == 4) {
         ArrayList<Byte> realtime_msg = freq_bands_obj.calculate_bands_amplitude();  
-        send_serial_msg_arraylist(MODE_MSG_realtime, realtime_msg);
+        user_interface.send_serial_msg_arraylist(MODE_MSG_realtime, realtime_msg);
     }
     else if(interaction_mode == 5) {
         freq_bands_obj.calculate_bands_amplitude();  
@@ -111,6 +113,12 @@ boolean reading_msg_flag = false;
 byte msg_type = 0;
 ArrayList<Byte> msg_body;
 
+void controlEvent(ControlEvent theEvent) {
+    user_interface.controlEvent(theEvent); 
+}
+
+
+
 void serialEvent(Serial myPort) {
     connection_established = true;
     while (myPort.available() > 0) {
@@ -126,7 +134,7 @@ void serialEvent(Serial myPort) {
              print(int(new_byte) + ", ");
              read_serial_bytes(new_byte);
          }
-     }
+    }
 }
 
 void keyPressed() {
