@@ -1,4 +1,4 @@
-class Freq_Bands {
+class Freq_Bands extends Bright_Element {
 
     Minim minim;
     AudioInput audio_input;

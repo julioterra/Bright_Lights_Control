@@ -1,4 +1,4 @@
-class Display_Box {
+class Display_Box extends Bright_Element {
 
   Freq_Bands freq_bands_obj;
   

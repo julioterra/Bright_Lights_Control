@@ -1,4 +1,4 @@
-class Physical_Devices_Output {
+class Physical_Devices_Output extends Bright_Element{
 
     Serial myPort;
     PApplet processing_app;
@@ -15,7 +15,6 @@ class Physical_Devices_Output {
     public Serial connect_serial(String serial_device_name) {
         String serial_list [] = Serial.list();
         println(serial_list);
-        
     
         int serial_num = -1;
         for(int i = (serial_list.length - 1); i >= 0; i--){     
@@ -41,7 +40,7 @@ class Physical_Devices_Output {
         return myPort;
     }
     
-    int connect_serial_obj(String serial_device_name) {
+    public int connect_serial_obj(String serial_device_name) {
         boolean serial_found = false;
         String serial_list [] = Serial.list();
         println(serial_list);
@@ -73,12 +72,12 @@ class Physical_Devices_Output {
         return serial_num;
     }
 
-    boolean connected() {
+    public boolean connected() {
       return connection_established; 
     }
     
-    void serialEvent(Serial myPort) {
-    connection_established = true;
+    public void serialEvent(Serial myPort) {
+        connection_established = true;
         while (myPort.available() > 0) {
              byte new_byte = byte(myPort.read());
               
@@ -95,7 +94,7 @@ class Physical_Devices_Output {
         }
     }
     
-    void read_serial_bytes(byte _new_byte) {
+    public void read_serial_bytes(byte _new_byte) {
         // MESSAGE START: if this byte is equal to or greater then 129 then we know that this is the start of a new message
         if (int(_new_byte) > 128 && int(_new_byte) < 255) {
             msg_type = _new_byte;
@@ -108,7 +107,7 @@ class Physical_Devices_Output {
         
             // MESSAGE END: if this byte is equal to 128 then we know that this is end of a message
             if (_new_byte == MSG_END) {
-                parse_serial_msg(msg_type, msg_body);
+                controller.parse_serial_msg(msg_type, msg_body);
                 reading_msg_flag = false;
             }
     
@@ -120,63 +119,19 @@ class Physical_Devices_Output {
     
         }
     }
-    
-//    void parse_serial_msg(byte _msg_type, ArrayList<Byte> _msg_body) {
-//    
-//        // this is a status message and the size is 21 without the header byte
-//        if (_msg_type == STATUS_MSG && _msg_body.size() >= 20 && interaction_mode != mode_realtime) {
-//            int current_index = 0;
-//            byte[] temp_bytes = {0,0,0};
-//    
-//    
-//            println("first element " + _msg_body.get(current_index));
-//            // set the first element in array to set mode_radio_button
-//            user_interface.mode_radio_button.activate(int(_msg_body.get(current_index)));
-//            current_index++;
-//    
-//            for (int i = 0; i < 3; i++) {
-//                temp_bytes[i] = _msg_body.get(current_index);  
-//                current_index++;
-//            } 
-//            user_interface.controlP5.controller("hue_slider").setValue(bytes2int_127(temp_bytes));
-//    
-//            for (int i = 0; i < 3; i++) {
-//                temp_bytes[i] = _msg_body.get(current_index);  
-//                current_index++;
-//            } 
-//            user_interface.controlP5.controller("sat_slider").setValue(bytes2int_127(temp_bytes));
-//    
-//            for (int i = 0; i < 3; i++) {
-//                temp_bytes[i] = _msg_body.get(current_index);  
-//                current_index++;
-//            } 
-//            user_interface.controlP5.controller("bright_slider").setValue(bytes2int_127(temp_bytes));
-//    
-//            for (int i = 0; i < 3; i++) {
-//                temp_bytes[i] = _msg_body.get(current_index);  
-//                current_index++;
-//            } 
-//            user_interface.controlP5.controller("strobe_slider").setValue(bytes2int_127(temp_bytes));
-//    
-//            for (int i = 0; i < 3; i++) {
-//                temp_bytes[i] = _msg_body.get(current_index);  
-//                current_index++;
-//            } 
-//            user_interface.controlP5.controller("scroll_slider").setValue(bytes2int_127(temp_bytes));
-//    
-//            user_interface.scroll_radio_button.activate(int(_msg_body.get(current_index)));
-//            current_index++;
-//    
-//            for (int i = 0; i < 3; i++) {
-//                temp_bytes[i] = _msg_body.get(current_index);  
-//                current_index++;
-//            } 
-//            user_interface.controlP5.controller("scroll_width_slider").setValue(bytes2int_127(temp_bytes));
-//        }    
-//    }
 
+    public void send_serial_byte(byte new_msg) {
+        if (serial_connected) {
+            myPort.write(msg_type);
+        }
+    }    
+    
+    public void stop() {
+        myPort.stop();  
+    }
+    
     // Methods that should be part of the serial_output/physical_output/abstract_output class    
-    void send_serial_msg(byte msg_type, byte[] msg_body) {
+    public void send_serial_msg(byte msg_type, byte[] msg_body) {
         if (serial_connected) {
             print("sending serial: " + (int)msg_type + ", ");
             myPort.write(msg_type);

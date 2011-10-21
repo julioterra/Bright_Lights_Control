@@ -34,8 +34,9 @@ boolean serial_connected = false;
     RadioButton mode_radio_button;
     RadioButton scroll_radio_button;
 
-    User_Interface user_interface;
+    User_Interface_Input user_interface;
     Physical_Devices_Output physical_output;
+    Bright_Controller controller;
 
 // Interface state message variables
     int interaction_mode = 0;
@@ -74,14 +75,14 @@ void setup () {
     physical_output = new Physical_Devices_Output(this);
     myPort = physical_output.connect_serial("/dev/tty.BlueJulio-M1");
     serial_connected = physical_output.connected();
-//    serial_connected = connect_serial("/dev/tty.usbserial-A");
-
-//    init_interface();
+    controller = new Bright_Controller();
     
+//    Bright_Element.init_bright_element (this, controller);
+
     freq_bands_obj = new Freq_Bands(this,setup_band_freq_init, freq_band_mult_init);
     freq_bands_obj.init_freq_bands_amp_offset(freq_amp_offset_init);
 
-    user_interface = new User_Interface(this, physical_output, freq_bands_obj);
+    user_interface = new User_Interface_Input(this, physical_output, freq_bands_obj);
     
     display_box_obj = new Display_Box(this, freq_bands_obj);    
     display_box_obj.init_size(600, 250);    
@@ -89,7 +90,7 @@ void setup () {
     
     freq_bands_obj.init_connect_display_link(display_box_obj);
     
-    if (serial_connected) myPort.write(STATUS_MSG);
+    if (serial_connected) physical_output.send_serial_byte(STATUS_MSG);
 }
 
 void draw () {
@@ -107,7 +108,7 @@ void draw () {
 void stop () {
   println("getting ready to close shop.");
   if (serial_connected) {
-      myPort.stop();  
+      physical_output.stop();  
       println("closed serial.");
   }
   freq_bands_obj.stop();
