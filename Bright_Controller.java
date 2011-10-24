@@ -278,40 +278,80 @@ public class Bright_Controller extends Bright_Element implements Bright_Constant
         }
     }
 
+	int int2byte127_r8 = Integer.parseInt("00000000" + "00000000" + "01111111" + "00000000", 2);
+	int int2byte127_r1 = Integer.parseInt("00000000" + "00000000" + "00000000" + "11111110", 2);
+	int int2byte127_l7 = Integer.parseInt("00000000" + "00000000" + "00000000" + "00000001", 2);
+	int[] int2byte127_convert926 = {int2byte127_r8, int2byte127_r1, int2byte127_l7};
+
     public byte[] int2bytes_127(int int_val) {
         byte[] byte_vals = {0,0,0};
-        Integer temp_int = (int_val >> 8);
 
-        byte_vals[0] = (byte)((int_val & 0x0000ff00) >>8); 
-        byte_vals[1] = (byte)((int_val & 0x00000fff) >>1);        
-        byte_vals[2] = (byte)((int_val & 0x000000ff) <<6) ;       
+		// use a binary "and" to encode the appropriate bits for each byte
+        int int_0 = (int_val & int2byte127_convert926[0]); 
+        int int_1 = (int_val & int2byte127_convert926[1]); 
+        int int_2 = (int_val & int2byte127_convert926[2]); 
 
-        processing_app.println("CONVERTED INTS - p1 " + (int)byte_vals[0] + " " + (int)byte_vals[1] + " " + (int)byte_vals[2] );
-        // shift all byte values over by one, so that values will range between 0 - 127 only
-        for (int i = 0; i < 3; i ++) {
-            temp_int = (int)byte_vals[i];
-//            temp_int = (temp_int & 0x000000ff) >> 1;
-            byte_vals[i] = (byte)((temp_int & 0x000000ff) >> 1);
-        }
-        processing_app.println("CONVERTED INTS - p2 " + (int)byte_vals[0] + " " + (int)byte_vals[1] + " " + (int)byte_vals[2] );
-        processing_app.println("ORIG " + int_val + " CONVERTED BACK: " + bytes2int_127(byte_vals));
+		if (debug_code) {
+			processing_app.println("int2bytes_127: ORIGINAL " + int_val + " [in bytes "+ Integer.toBinaryString(int_val) + "]");
+	        processing_app.println("int2bytes_127: processed ints " + int_0 + 
+								   " " + int_1 + 
+								   " " + int_2 +
+								   " [in bits" + 
+								   " " + Integer.toBinaryString(int_0) + 
+								   " " + Integer.toBinaryString(int_1) + 
+								   " " + Integer.toBinaryString(int_2) + "] " );
+							}
+			
+		// bit-shift the bit-processed integers and convert to bytes
+        byte_vals[0] = (byte)(int_0 >> 8); 
+        byte_vals[1] = (byte)(int_1 >> 1);        
+        byte_vals[2] = (byte)(int_2) ;       
+
+		if (debug_code) {
+	        processing_app.println("int2bytes_127: bytes " + (int)byte_vals[0] + 
+								   " " + (int)byte_vals[1] + 
+								   " " + (int)byte_vals[2] + 
+								   " [in bits" + 
+								   " " + Integer.toBinaryString((int)byte_vals[0]) + 
+								   " " + Integer.toBinaryString((int)byte_vals[1]) + 
+								   " " + Integer.toBinaryString((int)byte_vals[2]) + "]" );
+			bytes2int_127(byte_vals);
+		}
         return byte_vals;
     }
     
     public int bytes2int_127(byte[] byte_vals) {
-// ********** NEED TO FIX THIS METHOD **********
-      int new_int = 0;      
-      //        for (int i = 0; i < 3; i ++) {
-//            int temp_int = (int)(byte_vals[i]);
-//            byte_vals[i] = (byte)((temp_int & 0x000000ff) << 1);
-//        }
-//        
-//        int new_int = ((int)(((byte_vals[2]) >> 6) & 0x000000ff) +       // least significant byte
-//                       (int)(((byte_vals[1]) << 1) & 0x000000ff) + 
-//                       (int)(((byte_vals[0]) << 8) & 0x000000ff));      // most significant byte
-//    
-//        processing_app.println("INT " + new_int );
-//        
+
+		// assign the bytes to integer variables
+		int int_bv_0 = (int)(byte_vals[0]);
+		int int_bv_1 = (int)(byte_vals[1]);
+		int int_bv_2 = (int)(byte_vals[2]);
+
+		if (debug_code) {
+    		processing_app.println("bytes2int_127: byte converted to ints " + int_bv_0 + 
+						   " " + int_bv_1 + 
+						   " " + int_bv_2  + 
+						   " [in bits " +  Integer.toBinaryString(int_bv_0) + 
+						   " " + Integer.toBinaryString(int_bv_1) + 
+						   " " +  Integer.toBinaryString(int_bv_2) + "]");
+					}
+	
+		// bit shift the value of the bytes
+		int_bv_0 = int_bv_0 << 8;
+		int_bv_1 = int_bv_1 << 1;
+		int_bv_2 = int_bv_2;
+
+		if (debug_code) {
+		    processing_app.println("bytes2int_127: bytes shifted " + int_bv_0 + 
+						" " + int_bv_1 + 
+						" " + int_bv_2 +
+			   		    " [in bits " +  Integer.toBinaryString(int_bv_0) + 
+					    " " + Integer.toBinaryString(int_bv_1) + 
+					    " " +  Integer.toBinaryString(int_bv_2) + "]");
+				 }
+	
+		int new_int = int_bv_0 + int_bv_1 + int_bv_2;
+	    processing_app.println("bytes2int_127: RESULT " + new_int + " [in bytes " + Integer.toBinaryString(new_int) + "]");
         return new_int;      
 
     }

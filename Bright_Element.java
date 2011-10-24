@@ -6,7 +6,8 @@ public class Bright_Element implements Bright_Constants {
   
     static PApplet processing_app;
     static Bright_Controller controller;
-    
+    boolean debug_code = true;
+
     static void register_applet (PApplet _processing_app) {
         processing_app = _processing_app;  
     }

@@ -99,7 +99,7 @@ public class Bright_Lights_Control extends PApplet implements Bright_Constants{
     
     
     void controlEvent(ControlEvent theEvent) {
-        println("EVENT RECEIVED IN MAIN APP");
+//        println("EVENT RECEIVED IN MAIN APP");
         user_interface.controlEvent(theEvent); 
     }
     
