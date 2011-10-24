@@ -113,10 +113,12 @@ public class Freq_Bands_Input extends Bright_Element {
 
     ArrayList<Byte> get_send_led_realtime_data() {
       if (realtime_mode == 0) {
+		processing_app.println("get_send_led_realtime_data: reatlime mode 0 ");
         if (display_linked) display_link.display_realtime_freq_bands(get_led_vals_amp2hue());
         return get_led_vals_amp2hue();
       }
       else {
+		processing_app.println("get_send_led_realtime_data: reatlime mode 1 ");
         if (display_linked) display_link.display_realtime_freq_bands(get_led_vals_amp2bright_sat(200, 35));
         return get_led_vals_amp2bright(0);
       }
@@ -150,12 +152,12 @@ public class Freq_Bands_Input extends Bright_Element {
     ArrayList<Byte> get_led_vals_amp2bright_sat(int min_bright,int min_sat) {
       ArrayList<Byte> led_bytes = new ArrayList<Byte>();
       for (int i = 0; i < freq_bands_amp.size() ; i ++) {
-        processing_app.colorMode(processing_app.HSB, 255);
+        processing_app.colorMode(processing_app.HSB, 255, 255, 255);
         float _h = rgb_base_color_array[0]; 
         float _s = processing_app.map((rgb_base_color_array[1] * freq_bands_amp.get(i)), 0f, 255f, min_sat, 255f); 
         float _b = processing_app.map((rgb_base_color_array[2] * freq_bands_amp.get(i)), 0f, 255f, min_bright, 255f); 
         int temp_color = processing_app.color(_h, _s, _b);
-  
+		
         processing_app.colorMode(processing_app.RGB, 255);
         led_bytes.add((byte)(processing_app.map((temp_color >> 16 & 0xFF), 0, 255, 0, 127)));
         led_bytes.add((byte)(processing_app.map((temp_color >> 8 & 0xFF), 0, 255, 0, 127)));

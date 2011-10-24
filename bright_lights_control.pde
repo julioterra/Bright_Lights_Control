@@ -80,11 +80,11 @@ public class Bright_Lights_Control extends PApplet implements Bright_Constants{
     void draw () {
         display_box_obj.display_box();
         
-        if(interaction_mode == 4) {
+        if(controller.get_interaction_mode() == 4) {
             ArrayList<Byte> realtime_msg = freq_bands_obj.calculate_bands_amplitude();  
             physical_output.send_serial_msg_arraylist(MODE_MSG_realtime, realtime_msg);
         }
-        else if(interaction_mode == 5) {
+        else if(controller.get_interaction_mode() == 5) {
             freq_bands_obj.calculate_bands_amplitude();  
         }
     }

@@ -32,6 +32,7 @@ public class Bright_Controller extends Bright_Element implements Bright_Constant
     Bright_Controller (User_Interface_Input _user_interface) {
         user_interface = _user_interface;
         outputs = new HashMap<String, Physical_Devices_Output>();
+		// debug_code = false;
     }  
 
     //////////////
@@ -53,6 +54,9 @@ public class Bright_Controller extends Bright_Element implements Bright_Constant
 
     }
 
+	int get_interaction_mode() {
+		return interaction_mode;
+	}
 
     //////////////////////////////////////////////////////
     // methods that handle input from the SERIAL INTERFACE
