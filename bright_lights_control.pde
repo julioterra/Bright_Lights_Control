@@ -40,6 +40,9 @@ public class Bright_Lights_Control extends PApplet implements Bright_Constants{
     
     // Interface state message variables
         int interaction_mode = 0;
+
+	// Data Models
+	Bright_Model device_states;
     
     // audio freq analysis variables 
         float freq_band_mult_init = 2.5;
@@ -53,6 +56,7 @@ public class Bright_Lights_Control extends PApplet implements Bright_Constants{
         background(0);
         Bright_Element.register_applet (this);
         
+
         physical_output = new Physical_Devices_Output();
         physical_output.connect_serial("/dev/tty.BlueJulio-M1");
     
@@ -75,6 +79,8 @@ public class Bright_Lights_Control extends PApplet implements Bright_Constants{
         
           // MOVE THIS CODE TO THE CONTROLLER CLASS
 //        if (serial_connected) physical_output.send_serial_byte(STATUS_MSG);
+		device_states = new Bright_Model(8, 1);
+
     }
     
     void draw () {

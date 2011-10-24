@@ -1,10 +1,10 @@
 public interface Bright_Constants {
   
     // CONSTANTS: message syntax constants
-    final static byte MSG_END =           (byte)(128);
+    final static byte MSG_END =            (byte)(128);
     
     // CONSTANTS: receiving message header constants
-    final static byte CONNECT_CONFIRM =   (byte)(255);              
+    final static byte CONNECT_CONFIRM =    (byte)(255);              
     final static byte STATUS_MSG =         (byte)(254);              
     final static byte MODE_MSG_realtime =  (byte)(253);
     final static byte MODE_MSG_off =       (byte)(252);
