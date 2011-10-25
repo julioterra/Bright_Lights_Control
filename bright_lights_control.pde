@@ -20,26 +20,20 @@ public class Bright_Lights_Control extends PApplet implements Bright_Constants{
         Freq_Bands_Input freq_bands_obj;
         Display_Box display_box_obj;
     
-    // Interface state message variables
+        // Interface state message variables
         int interaction_mode = 0;
-
-	// Data Models
-	// BModel_Handler device_states;
     
-    // audio freq analysis variables 
+        // audio freq analysis variables 
         float freq_band_mult_init = 2.5;
         int setup_band_freq_init = 20;
-    //    float freq_amplitude_range_init =150f;
+    	// float freq_amplitude_range_init =150f;
         float [] freq_amp_offset_init = {1f,1f,1f,3f,5f,8f,14f,20f};
-
-		XMLElement xml;
 
     void setup () {
          // set the window size:
         size(900,350);
         background(0);
         Bright_Element.register_applet (this);
-        
 
         physical_output = new Physical_Devices_Output();
         physical_output.connect_serial("/dev/tty.BlueJulio-M1");
@@ -62,10 +56,10 @@ public class Bright_Lights_Control extends PApplet implements Bright_Constants{
         freq_bands_obj.init_connect_display_link(display_box_obj);
         
 		// device_states = new BModel_Handler();
-		BModel_HandlerXML device_handler = new BModel_HandlerXML();
+		BModel_HandlerXML device_handler = new BModel_HandlerXML("BModel_TempPhysicalBW.xml");
+		BModel_HandlerXML device_handler_2 = new BModel_HandlerXML("BModel_TempPhysicalBW2.xml");
+		BModel_HandlerXML device_handler_3 = new BModel_HandlerXML("BModel_TempPhysicalBW3.xml");
 
-	  xml = new XMLElement(this, "BModel_TempPhysicalBW.xml");
-	  readXMLElement(xml, "  ");
     }
 
 	void readXMLElement(XMLElement element, String prefix) {
@@ -91,7 +85,9 @@ public class Bright_Lights_Control extends PApplet implements Bright_Constants{
         
         if(controller.get_interaction_mode() == 4) {
             ArrayList<Byte> realtime_msg = freq_bands_obj.calculate_bands_amplitude();  
-            physical_output.send_serial_msg_arraylist(MODE_MSG_realtime, realtime_msg);
+			if (controller.is_on()) {
+	            physical_output.send_serial_msg_arraylist(MODE_MSG_realtime, realtime_msg);
+			}
         }
         else if(controller.get_interaction_mode() == 5) {
             freq_bands_obj.calculate_bands_amplitude();  

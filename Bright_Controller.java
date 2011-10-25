@@ -57,6 +57,10 @@ public class Bright_Controller extends Bright_Element implements Bright_Constant
 	int get_interaction_mode() {
 		return interaction_mode;
 	}
+	
+	boolean is_on() {
+		return lights_on;
+	}
 
     //////////////////////////////////////////////////////
     // methods that handle input from the SERIAL INTERFACE

@@ -94,9 +94,9 @@ public class Display_Box extends Bright_Element {
         for (int i = 0; i < _new_bytes.size()/3; i ++) {
             int index_offset = i * 3;
             processing_app.colorMode(processing_app.RGB, 255);
-            float temp_red = processing_app.map((int)(_new_bytes.get(index_offset+0)), 0, 127, 0, 255);
-            float temp_green = processing_app.map((int)(_new_bytes.get(index_offset+1)), 0, 127, 0, 255);
-            float temp_blue = processing_app.map((int)(_new_bytes.get(index_offset+2)), 0, 127, 0, 255);
+            float temp_red = processing_app.map((int)(_new_bytes.get(index_offset+0)), 0, 100, 0, 255);
+            float temp_green = processing_app.map((int)(_new_bytes.get(index_offset+1)), 0, 100, 0, 255);
+            float temp_blue = processing_app.map((int)(_new_bytes.get(index_offset+2)), 0, 100, 0, 255);
             int temp_color = processing_app.color(temp_red, temp_green, temp_blue, 10);
             processing_app.colorMode(processing_app.HSB, 255);
             float freq_amplitude = (processing_app.brightness(temp_color)/255f);
