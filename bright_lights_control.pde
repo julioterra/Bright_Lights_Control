@@ -6,24 +6,6 @@ import ddf.minim.*;
 
 public class Bright_Lights_Control extends PApplet implements Bright_Constants{
 
-//    // CONSTANTS: message syntax constants
-//    byte MSG_END =           byte(128);
-//    
-//    // CONSTANTS: receiving message header constants
-//    byte CONNECT_CONFIRM =   byte(255);              
-//    byte STATUS_MSG =        byte(254);              
-//    byte MODE_MSG_realtime = byte(253);
-//    byte MODE_MSG_off =      byte(252);
-//    byte SET_MSG_hsb =       byte(129);
-//    byte MODE_MSG_color_hsb = byte(192);
-//    byte MODE_MSG_scroll =   byte(193);
-//    byte MODE_MSG_strobe =   byte(194);
-    
-//    int mode_realtime = int(4);
-//    boolean lights_on = false;
-    
-    // Serial port object
-//    Serial myPort;
     boolean serial_connected = false;
     
     // Interface control objects
@@ -42,13 +24,15 @@ public class Bright_Lights_Control extends PApplet implements Bright_Constants{
         int interaction_mode = 0;
 
 	// Data Models
-	Bright_Model device_states;
+	// BModel_Handler device_states;
     
     // audio freq analysis variables 
         float freq_band_mult_init = 2.5;
         int setup_band_freq_init = 20;
     //    float freq_amplitude_range_init =150f;
         float [] freq_amp_offset_init = {1f,1f,1f,3f,5f,8f,14f,20f};
+
+		XMLElement xml;
 
     void setup () {
          // set the window size:
@@ -77,11 +61,30 @@ public class Bright_Lights_Control extends PApplet implements Bright_Constants{
         
         freq_bands_obj.init_connect_display_link(display_box_obj);
         
-          // MOVE THIS CODE TO THE CONTROLLER CLASS
-//        if (serial_connected) physical_output.send_serial_byte(STATUS_MSG);
-		device_states = new Bright_Model(8, 1);
+		// device_states = new BModel_Handler();
+		BModel_HandlerXML device_handler = new BModel_HandlerXML();
 
+	  xml = new XMLElement(this, "BModel_TempPhysicalBW.xml");
+	  readXMLElement(xml, "  ");
     }
+
+	void readXMLElement(XMLElement element, String prefix) {
+		int sub_elements = element.getChildCount();
+	  	for (int i = 0; i < sub_elements; i++) {
+			XMLElement xmlChild = element.getChild(i);
+		    String name = xmlChild.getName(); 		
+			int children = xmlChild.getChildCount();
+		  	print(prefix + "-" + name);
+			if (children > 0) {
+			    println(); 
+				readXMLElement(xmlChild, prefix + "  ");
+			}
+			else {
+				String content = xmlChild.getContent();
+			    println(": " + content);    			
+			}
+		}
+	}
     
     void draw () {
         display_box_obj.display_box();

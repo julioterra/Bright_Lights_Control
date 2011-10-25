@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<device>
+
+	<name>bright_words_v1</name> 
+	
+	<specifications>
+		<media>
+			<type datatype="str">physical</type>
+			<port datatype="str">serial</port>
+		</media> 
+		
+		<layout>
+			<columns datatype="int">8</columns>
+			<rows datatype="int">1</rows>
+		</layout> 
+	</specifications>
+
+	<resources>
+		<color> 
+			<hue datatype="float"> 
+				<min>0</min>
+				<max>1</max>
+			</hue>
+			<saturation datatype="float"> 
+				<min>0</min>
+				<max>1</max>
+			</saturation>
+			<brightness datatype="float"> 
+				<min>0</min>
+				<max>1</max>
+			</brightness>
+		</color>
+		<strobe> 
+			<speed datatype="float"> 
+				<min>0</min>
+				<max>1</max>
+			</speed>
+		</strobe>
+		<scroll> 
+			<speed datatype="float"> 
+				<min>0</min>
+				<max>1</max>
+			</speed>
+			<direction datatype="float"> 
+				<min>0</min>
+				<max>1</max>
+			</direction>
+			<width datatype="float"> 
+				<min>0</min>
+				<max>1</max>
+			</width>
+		</scroll>
+		<realtime>
+			<raw datatype="byte">
+				<min>0</min>
+				<max>127</max>
+			</raw>
+		</realtime>
+	</resources>
+
+</device>
