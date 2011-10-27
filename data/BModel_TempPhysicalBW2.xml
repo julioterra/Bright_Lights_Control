@@ -5,17 +5,36 @@
 	
 	<specifications>
 		<media>
-			<type datatype="str">physical</type>
-			<port datatype="str">serial</port>
+			<type>physical</type>
+			<port>serial</port>
 		</media> 
 		
 		<layout>
-			<columns datatype="int">8</columns>
-			<rows datatype="int">1</rows>
+			<columns>8</columns>
+			<rows>1</rows>
 		</layout> 
+
+		<contents>
+			<transport></transport>
+			<resources>in/out</resources>
+			<realtime>in</realtime>
+		<contents>		
 	</specifications>
 
-	<resources>
+	<transport>
+		<power datatype="int">
+			<on>1</on>
+			<off>2</off>
+		</power> 		
+		<mode datatype="int">
+			<color>0</color>
+			<strobe>1</strobe>
+			<scroll>1</scroll>
+			<realtime>1</realtime>
+		</mode> 
+	</transport>
+
+	<resources dataflow="in/out">
 		<color> 
 			<hue datatype="float"> 
 				<min>0</min>
@@ -51,5 +70,19 @@
 			</width>
 		</scroll>
 	</resources>
+
+	<realtime>
+		<output> 
+			<addresses datatype="byte">24</addresses>
+			<range>
+				<min>0</min>
+				<max>127</max>
+			<range>
+		</output>
+
+		<input>
+			
+		</input>
+	</realtime>
 
 </device>

@@ -10,21 +10,16 @@ public class BModel_HandlerXML extends Bright_Element implements Bright_Constant
 
 	// takes a reosource name along with a hashmap that contains that resources attributes
 	BModel_ActiveRec new_record;
-	BModel_TempControl data_model;
 
 	public BModel_HandlerXML (String xml_file) {		
 
-		data_model = new BModel_TempControl();
 		new_record = new BModel_ActiveRec();
 
 	  	XMLElement xml = new XMLElement(processing_app, xml_file);
-		XMLElement specs_xml = xml.getChild("specifications");
-		XMLElement resources_xml = xml.getChild("resources");		
-		XMLElement name_xml = xml.getChild("name");		
+		new_record.name = xml.getChild("name").getContent();
+		loadSpecs(xml.getChild("specifications"));
+		loadResources(xml.getChild("resources"));
 
-		new_record.name = name_xml.getContent();
-		loadSpecs(specs_xml);
-		loadResources(resources_xml);
 	}
 
 	void loadResources(XMLElement resources_xml) {
@@ -81,48 +76,7 @@ public class BModel_HandlerXML extends Bright_Element implements Bright_Constant
 			processing_app.println();
 		}
 	}
-		
-
-	void add_resources(String datatype, String attr_name, HashMap<String, Object> active_hash) {
-		boolean debug_code = false;
-		if(datatype.contains("str")) {
-			if (debug_code) processing_app.println("string: " + " ");
-			active_hash.put(attr_name, new String(" "));
-		}
-		else if(datatype.contains("float")) {
-			if (debug_code) processing_app.println("float: " + 0f);
-			active_hash.put(attr_name, new Float(0.0));
-		}
-		else if(datatype.contains("int")) {
-			if (debug_code) processing_app.println("integer: " + 0);
-			active_hash.put(attr_name, new Integer(0));
-		}
-		else if(datatype.contains("byte")) {
-			if (debug_code) processing_app.println("byte: (byte)0");
-			active_hash.put(attr_name, (byte)0);
-		}
-	}
-
-	void add_resources_init(String datatype, String attr_name, String attr_value, HashMap<String, Object> active_hash) {
-		boolean debug_code = false;
-		if(datatype.contains("str")) {
-			if (debug_code) processing_app.println("string: " + attr_value);
-			active_hash.put(attr_name, new String(attr_value));
-		}
-		else if(datatype.contains("float")) {
-			if (debug_code) processing_app.println("float: " + Float.parseFloat(attr_value));
-			active_hash.put(attr_name, Float.parseFloat(attr_value));
-		}
-		else if(datatype.contains("int")) {
-			if (debug_code) processing_app.println("integer: " + Integer.parseInt(attr_value));
-			active_hash.put(attr_name, Integer.parseInt(attr_value));
-		}
-		else if(datatype.contains("byte")) {
-			if (debug_code) processing_app.println("byte: (byte)0 " + Byte.parseByte(attr_value));
-			active_hash.put(attr_name, Byte.parseByte(attr_value));
-		}
-	}
-
+			
 	public String[] get_names (XMLElement resources_xml) {
 		return resources_xml.listChildren();
 	}
@@ -199,39 +153,44 @@ public class BModel_HandlerXML extends Bright_Element implements Bright_Constant
 		return content;
 	}
 
-	// void readXMLElement(XMLElement element, String prefix) {
-	// 	int sub_elements = element.getChildCount();
-	//   	for (int i = 0; i < sub_elements; i++) {
-	// 		XMLElement xmlChild = element.getChild(i);
-	// 	    String name = xmlChild.getName(); 		
-	// 		int children = xmlChild.getChildCount();
-	// 	  	processing_app.print(prefix + "-" + name);
-	// 		if (children > 0) {
-	// 		    processing_app.println(); 
-	// 			readXMLElement(xmlChild, prefix + "  ");
-	// 		}
-	// 		else {
-	// 			String content = xmlChild.getContent();
-	// 		    processing_app.println(": " + content);    			
-	// 		}
-	// 	}
-	// }
+	void add_resources(String datatype, String attr_name, HashMap<String, Object> active_hash) {
+		boolean debug_code = false;
+		if(datatype.contains("str")) {
+			if (debug_code) processing_app.println("string: " + " ");
+			active_hash.put(attr_name, new String(" "));
+		}
+		else if(datatype.contains("float")) {
+			if (debug_code) processing_app.println("float: " + 0f);
+			active_hash.put(attr_name, new Float(0.0));
+		}
+		else if(datatype.contains("int")) {
+			if (debug_code) processing_app.println("integer: " + 0);
+			active_hash.put(attr_name, new Integer(0));
+		}
+		else if(datatype.contains("byte")) {
+			if (debug_code) processing_app.println("byte: (byte)0");
+			active_hash.put(attr_name, (byte)0);
+		}
+	}
 
-
-	// Byte[] get_iterator(String _resource) {
-	// 	String [] new_string = (String[]) new_record.attr_names.get(_resource);
-	// 	Byte [] new_bytes;
-	// 	if (!new_string[0].contains("raw")) {
-	// 		new_bytes = new Byte[0];
-	// 	}
-	// 	else {
-	// 		HashMap<Integer, Byte> int_hash = new_record.resources.get(_resource);
-	// 		new_bytes = new Byte[int_hash.size()];
-	// 		for (int i = 0; i < int_hash.size(); i++) {
-	// 			new_bytes[i] = int_hash.get(i);
-	// 		}
-	// 	}
-	// 	return new_bytes;
-	// }
+	void add_resources_init(String datatype, String attr_name, String attr_value, HashMap<String, Object> active_hash) {
+		boolean debug_code = false;
+		if(datatype.contains("str")) {
+			if (debug_code) processing_app.println("string: " + attr_value);
+			active_hash.put(attr_name, new String(attr_value));
+		}
+		else if(datatype.contains("float")) {
+			if (debug_code) processing_app.println("float: " + Float.parseFloat(attr_value));
+			active_hash.put(attr_name, Float.parseFloat(attr_value));
+		}
+		else if(datatype.contains("int")) {
+			if (debug_code) processing_app.println("integer: " + Integer.parseInt(attr_value));
+			active_hash.put(attr_name, Integer.parseInt(attr_value));
+		}
+		else if(datatype.contains("byte")) {
+			if (debug_code) processing_app.println("byte: (byte)0 " + Byte.parseByte(attr_value));
+			active_hash.put(attr_name, Byte.parseByte(attr_value));
+		}
+	}
 
 }

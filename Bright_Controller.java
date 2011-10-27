@@ -3,7 +3,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.lang.Number;
 
-public class Bright_Controller extends Bright_Element implements Bright_Constants{
+public class Bright_Controller extends Bright_Element implements Bright_Constants {
   
     int interaction_mode = 0;
     boolean lights_on = false;
@@ -184,20 +184,20 @@ public class Bright_Controller extends Bright_Element implements Bright_Constant
       if (lights_on && (id.equals("onOffRadioButton") || id.equals("modeRadioButton"))) { 
           switch (interaction_mode) {
               case 0:  
-                  physical_output.send_serial_msg(Bright_Constants.MODE_MSG_off, convert_array_int_to_byte_full(hsb_msg));
+                  physical_output.send_serial_msg(MODE_MSG_off, convert_array_int_to_byte_full(hsb_msg));
                   break;
               case 1:  
-                  physical_output.send_serial_msg(Bright_Constants.MODE_MSG_color_hsb, convert_array_int_to_byte_full(hsb_msg));
+                  physical_output.send_serial_msg(MODE_MSG_color_hsb, convert_array_int_to_byte_full(hsb_msg));
                   break;
               case 2:
-                  physical_output.send_serial_msg(Bright_Constants.MODE_MSG_strobe, convert_array_int_to_byte(strobe_msg));
+                  physical_output.send_serial_msg(MODE_MSG_strobe, convert_array_int_to_byte(strobe_msg));
                   break;
               case 3:
-                  physical_output.send_serial_msg(Bright_Constants.MODE_MSG_scroll, convert_array_int_to_byte(scroll_msg));
+                  physical_output.send_serial_msg(MODE_MSG_scroll, convert_array_int_to_byte(scroll_msg));
                   break;
               case 4:
-                  byte empty_array[] = {(byte)(0), Bright_Constants.MSG_END};
-                  physical_output.send_serial_msg(Bright_Constants.MODE_MSG_realtime, empty_array);
+                  byte empty_array[] = {(byte)(0), MSG_END};
+                  physical_output.send_serial_msg(MODE_MSG_realtime, empty_array);
                   break;
               default:
                   break;
@@ -210,7 +210,7 @@ public class Bright_Controller extends Bright_Element implements Bright_Constant
             scroll_msg[1] = (int)value;
             display_box.set_scroll(127, scroll_msg[0], scroll_msg[1], scroll_msg[2]);
             if (interaction_mode == 3) {
-                physical_output.send_serial_msg(Bright_Constants.MODE_MSG_scroll, convert_array_int_to_byte(scroll_msg));
+                physical_output.send_serial_msg(MODE_MSG_scroll, convert_array_int_to_byte(scroll_msg));
                 
             }
       }
@@ -222,7 +222,7 @@ public class Bright_Controller extends Bright_Element implements Bright_Constant
                 if (lights_on && interaction_mode != mode_realtime) {
                 processing_app.println("sending HSB msg");
                     previous_hsb_msg = update_previous_array(hsb_msg, previous_hsb_msg);
-                    if (slider_range != 127) physical_output.send_serial_msg(Bright_Constants.SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
+                    if (slider_range != 127) physical_output.send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
                     else physical_output.send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte(hsb_msg));
                 }
             }

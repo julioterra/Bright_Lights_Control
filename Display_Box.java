@@ -13,54 +13,50 @@ public class Display_Box extends Bright_Element {
   // display class objects
   PVector display_leds_nums;
   PVector display_position;
+  ArrayList<PVector> display_size_active;
   PVector display_size;
+  ArrayList<PVector> display_position_active;
+  ArrayList<Integer> display_colors_active;
 
-  float rgb_color[] = new float[3];
+  PShape bw_box_front;
+  PShape bw_box_back;
+
+  float rgb_color[] = {0,0,0};
   int scroll_msg[] = {4,0,0};
   int strobe_msg[] = {0};
-
-  ArrayList<PVector> display_position_active;
-  ArrayList<PVector> display_size_active;
-  ArrayList<Integer> active_colors;
   
   int display_bandwidth = 0;
   int display_mode = 1;
   int display_modes_total = 5;
-  PShape bw_box_front;
-  PShape bw_box_back;
   int realtime_mode = 0;
 
   // constructor   
     Display_Box (PApplet _this_app, Freq_Bands_Input _freq_bands) {
-  
-      freq_bands_obj = _freq_bands;    
-      bw_box_front = processing_app.loadShape("bright_front_new.svg");
-      bw_box_back= processing_app.loadShape("bright_back.svg");
-      display_leds_nums = new PVector(freq_bands_obj.get_number_of_bands(), 1);
+	      freq_bands_obj = _freq_bands;    
+	      bw_box_front = processing_app.loadShape("bright_front_new.svg");
+	      bw_box_back= processing_app.loadShape("bright_back.svg");
+	      display_leds_nums = new PVector(freq_bands_obj.get_number_of_bands(), 1);
 
-      active_colors = new ArrayList<Integer>();
-      for (int i = 0; i < display_leds_nums.x * display_leds_nums.y; i ++) {
-          active_colors.add(0);
-      }
-      display_size_active  = new ArrayList<PVector>();
-      for (int i = 0; i < display_leds_nums.x * display_leds_nums.y; i ++) {
-          display_size_active.add(new PVector(0,0));
-      }      
-      display_position_active  = new ArrayList<PVector>();
-      for (int i = 0; i < display_leds_nums.x * display_leds_nums.y; i ++) {
-          display_position_active.add(new PVector(0,0));
-      }      
+	      display_colors_active = new ArrayList<Integer>();
+	      for (int i = 0; i < display_leds_nums.x * display_leds_nums.y; i ++) {
+	          display_colors_active.add(0);
+	      }
+	      display_size_active  = new ArrayList<PVector>();
+	      for (int i = 0; i < display_leds_nums.x * display_leds_nums.y; i ++) {
+	          display_size_active.add(new PVector(0,0));
+	      }      
+	      display_position_active  = new ArrayList<PVector>();
+	      for (int i = 0; i < display_leds_nums.x * display_leds_nums.y; i ++) {
+	          display_position_active.add(new PVector(0,0));
+	      }      
     }  
   
     void set_display_mode(int _mode) {
-      display_mode = processing_app.constrain(_mode, 0, display_modes_total-1);
+    	display_mode = processing_app.constrain(_mode, 0, display_modes_total-1);
     }
-  
-  
-    // ** METHODS FOR THE DISPLAY CLASS 
-  
+    
     void init_pos(int posx, int posy) {
-      display_position = new PVector ((posx+display_bandwidth/2), posy);
+    	display_position = new PVector ((posx+display_bandwidth/2), posy);
     }
   
     void init_size(int sizex, int sizey) {
@@ -102,7 +98,7 @@ public class Display_Box extends Bright_Element {
             float freq_amplitude = (processing_app.brightness(temp_color)/255f);
             int x_loc = (int)(display_position.x + (i * display_bandwidth) + (display_bandwidth/2));
 
-            active_colors.set(i, temp_color);
+            display_colors_active.set(i, temp_color);
             display_size_active.set(i, new PVector((display_bandwidth*radius_mult*freq_amplitude), (display_bandwidth*radius_mult*freq_amplitude)));
             display_position_active.set(i, new PVector(x_loc, display_position.y));  
         }
@@ -117,20 +113,20 @@ public class Display_Box extends Bright_Element {
     
         PVector box_size = new PVector((float)(display_size.x*1.265),(float)((display_size.x*1.265)/5));
         PVector box_pos = new PVector((float)(display_position.x-(box_size.x*0.1)),(float)(display_position.y-(box_size.y*0.5)));
+
         processing_app.shape(bw_box_back, box_pos.x, box_pos.y, box_size.x, box_size.y);           
 
-
-//        if (display_mode == 1 && display_mode == 4) {
+       // if (display_mode == 1 && display_mode == 4) {
             for (int i = 0; i < display_leds_nums.x * display_leds_nums.y; i ++) {
-                processing_app.fill(active_colors.get(i));           
+                processing_app.fill(display_colors_active.get(i));           
                 PVector temp_size = new PVector(display_size_active.get(i).x, display_size_active.get(i).y);   
                 PVector temp_pos = new PVector(display_position_active.get(i).x, display_position_active.get(i).y);   
                 for (float j = 1; j >= 0.1; j = j - j * 0.025f) {
                    processing_app.ellipse(temp_pos.x, temp_pos.y, temp_size.x*j, temp_size.y*j);
                 }
             }
-//        }
-        processing_app.shape(bw_box_front, box_pos.x, box_pos.y, box_size.x, box_size.y);
+       // }
+       processing_app.shape(bw_box_front, box_pos.x, box_pos.y, box_size.x, box_size.y);
 
     }
 

@@ -33,7 +33,8 @@ public class Bright_Lights_Control extends PApplet implements Bright_Constants{
          // set the window size:
         size(900,350);
         background(0);
-        Bright_Element.register_applet (this);
+        Bright_Element.register_applet(this);
+		Bright_Element.init_models_hash();
 
         physical_output = new Physical_Devices_Output();
         physical_output.connect_serial("/dev/tty.BlueJulio-M1");
@@ -43,7 +44,7 @@ public class Bright_Lights_Control extends PApplet implements Bright_Constants{
     
         user_interface = new User_Interface_Input(this, physical_output, freq_bands_obj);
         controller = new Bright_Controller(user_interface);     
-        Bright_Element.register_controller (controller);
+        Bright_Element.register_controller(controller);
         
         display_box_obj = new Display_Box(this, freq_bands_obj);    
         display_box_obj.init_size(600, 250);    
@@ -57,8 +58,6 @@ public class Bright_Lights_Control extends PApplet implements Bright_Constants{
         
 		// device_states = new BModel_Handler();
 		BModel_HandlerXML device_handler = new BModel_HandlerXML("BModel_TempPhysicalBW.xml");
-		BModel_HandlerXML device_handler_2 = new BModel_HandlerXML("BModel_TempPhysicalBW2.xml");
-		BModel_HandlerXML device_handler_3 = new BModel_HandlerXML("BModel_TempPhysicalBW3.xml");
 
     }
 
@@ -104,7 +103,6 @@ public class Bright_Lights_Control extends PApplet implements Bright_Constants{
     
     
     void controlEvent(ControlEvent theEvent) {
-//        println("EVENT RECEIVED IN MAIN APP");
         user_interface.controlEvent(theEvent); 
     }
     
