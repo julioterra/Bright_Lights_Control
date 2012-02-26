@@ -2,13 +2,23 @@ import processing.core.PApplet;
 import java.util.HashMap;
 import java.util.ArrayList;
 
-public class Bright_Element implements Bright_Constants {
+/*****************
+ * Bright_Element: abstract class that is used as the base for all application classes
+ *
+ * Features several static variables that provide all child classes with access to base 
+ * application components such as:
+ * 		- the applet
+ *  	- the controller 
+ * 		- the models
+ * 
+ */
+
+public class Bright_Element implements BL_Constants {
   
     static PApplet processing_app;
     static Bright_Controller controller;
 	static HashMap<String, BModel_ActiveRec> devices;
     boolean debug_code = true;
-
 	
     static void register_applet (PApplet _processing_app) {
         processing_app = _processing_app;  

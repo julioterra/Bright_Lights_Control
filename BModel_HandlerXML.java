@@ -6,22 +6,43 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ArrayList;
 
-public class BModel_HandlerXML extends Bright_Element implements Bright_Constants {
+public class BModel_HandlerXML extends Bright_Element {
 
 	// takes a reosource name along with a hashmap that contains that resources attributes
 	BModel_ActiveRec new_record;
 
 	public BModel_HandlerXML (String xml_file) {		
 
-		new_record = new BModel_ActiveRec();
-
+		// load the xml content from the file provided 
+		// create the active_record object that will holds the model for the computer
+		// set the name of the active_record object using the "name" from the xml file
 	  	XMLElement xml = new XMLElement(processing_app, xml_file);
+		new_record = new BModel_ActiveRec();
 		new_record.name = xml.getChild("name").getContent();
-		loadSpecs(xml.getChild("specifications"));
-		loadResources(xml.getChild("resources"));
+		
+		
+		// attempt to read the different types of content supported. 
+		// catch NullPointExceptions, which will happen if xml does not include any of these.
+		try { 
+			loadSpecs(xml.getChild("specifications"));
+		} catch (NullPointerException e) {
+			processing_app.println("NOTE: specifications not provided in this xml file");
+		}
+
+		try {
+			loadResources(xml.getChild("passive_resources"));
+		} catch (NullPointerException e) {
+			processing_app.println("NOTE: resources not provided in this xml file");
+		}
+
+		try {
+			loadSpecs(xml.getChild("active_resources"));
+		} catch (NullPointerException e) {
+			processing_app.println("NOTE: active resources not provided in this xml file");
+		}
 
 	}
-
+		
 	void loadResources(XMLElement resources_xml) {
 
 		new_record.resource_names = get_names(resources_xml);

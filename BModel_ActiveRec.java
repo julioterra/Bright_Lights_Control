@@ -12,12 +12,10 @@ public class BModel_ActiveRec extends Bright_Element {
 	// takes a reosource name along with a hashmap that contains that resources attributes
 	public String[] resource_names;
 	public HashMap<String, String[]> attr_names;	
-
 	public HashMap<String, HashMap> resources;
 	public HashMap<String, Object> resource;
 	public HashMap<String, HashMap> attr_types;
 	public HashMap<String, String> attr_type;
-
 	public HashMap<String, HashMap> attr_ranges;
 	public HashMap<String, PVector> attr_range;
 

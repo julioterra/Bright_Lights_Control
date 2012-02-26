@@ -1,8 +1,6 @@
 import processing.core.PApplet;
 import processing.core.PVector;
 import processing.core.PShape;
-
-
 import java.util.HashMap;
 import java.util.ArrayList;
 
@@ -31,12 +29,11 @@ public class Display_Box extends Bright_Element {
   int realtime_mode = 0;
 
   // constructor   
-    Display_Box (PApplet _this_app, Freq_Bands_Input _freq_bands) {
-	      freq_bands_obj = _freq_bands;    
+    Display_Box (PVector _display_leds_nums) {
 	      bw_box_front = processing_app.loadShape("bright_front_new.svg");
 	      bw_box_back= processing_app.loadShape("bright_back.svg");
-	      display_leds_nums = new PVector(freq_bands_obj.get_number_of_bands(), 1);
-
+		  display_leds_nums = _display_leds_nums;
+		
 	      display_colors_active = new ArrayList<Integer>();
 	      for (int i = 0; i < display_leds_nums.x * display_leds_nums.y; i ++) {
 	          display_colors_active.add(0);

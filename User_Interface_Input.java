@@ -5,22 +5,14 @@ import processing.core.PVector;
 import java.util.HashMap;
 import java.util.ArrayList;
 
-public class User_Interface_Input extends Bright_Element implements Bright_Constants {
+public class User_Interface_Input extends Bright_Element {
   
     public ControlP5 controlP5;
     public RadioButton on_radio_button;
     public RadioButton mode_radio_button;
-    public RadioButton scroll_radio_button;
-    
-    PApplet processing_app;
-    Serial myPort; 
-    Physical_Devices_Output physical_output;
-    Freq_Bands_Input freq_bands_obj;
+    public RadioButton scroll_radio_button;    
 
-  public User_Interface_Input(PApplet _processing_app, Physical_Devices_Output _physical_output, Freq_Bands_Input _freq_bands_obj) {
-      processing_app = _processing_app;
-      physical_output = _physical_output;
-      freq_bands_obj = _freq_bands_obj;
+  public User_Interface_Input() {
       controlP5 = new ControlP5(processing_app);
     
       PVector control_origin = new PVector(20,20);

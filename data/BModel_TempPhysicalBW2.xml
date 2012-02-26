@@ -18,19 +18,19 @@
 			<transport></transport>
 			<resources>in/out</resources>
 			<realtime>in</realtime>
-		<contents>		
+		</contents>		
 	</specifications>
 
 	<transport>
 		<power datatype="int">
-			<on>1</on>
-			<off>2</off>
+			<on>0</on>
+			<off>1</off>
 		</power> 		
 		<mode datatype="int">
 			<color>0</color>
 			<strobe>1</strobe>
-			<scroll>1</scroll>
-			<realtime>1</realtime>
+			<scroll>2</scroll>
+			<realtime>3</realtime>
 		</mode> 
 	</transport>
 

@@ -3,7 +3,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.lang.Number;
 
-public class Bright_Controller extends Bright_Element implements Bright_Constants {
+public class Bright_Controller extends Bright_Element {
   
     int interaction_mode = 0;
     boolean lights_on = false;
@@ -39,12 +39,10 @@ public class Bright_Controller extends Bright_Element implements Bright_Constant
     // join all the ouput registration methods into a single one with a HashKey and names
     void register_physical_output(Physical_Devices_Output _physical_output) {
         physical_output = _physical_output;
-
     }
 
     void register_display_output(Display_Box _display_box) {
         display_box = _display_box;
-
     }
 
     //////////////
@@ -173,7 +171,7 @@ public class Bright_Controller extends Bright_Element implements Bright_Constant
                   break;
               case 1: 
                   lights_on = false;
-                  physical_output.send_serial_msg(Bright_Constants.MODE_MSG_off, convert_array_int_to_byte_full(hsb_msg));
+                  physical_output.send_serial_msg(BL_Constants.MODE_MSG_off, convert_array_int_to_byte_full(hsb_msg));
                   break;
           }
       }

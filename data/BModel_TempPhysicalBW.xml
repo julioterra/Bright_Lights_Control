@@ -15,7 +15,7 @@
 		</layout> 
 	</specifications>
 
-	<resources>
+	<passive_resources>
 		<color> 
 			<hue datatype="float"> 
 				<min>0</min>
@@ -56,6 +56,6 @@
 				<max>127</max>
 			</raw>
 		</realtime>
-	</resources>
+	</passive_resources>
 
 </device>

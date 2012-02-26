@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import processing.serial.*;
 
 
-public class Physical_Devices_Output extends Bright_Element implements Bright_Constants {
+public class Physical_Devices_Output extends Bright_Element {
 
     Serial myPort;
     boolean connection_established = false;
