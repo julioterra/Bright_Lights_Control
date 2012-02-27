@@ -77,6 +77,10 @@ public class Freq_Bands_Input extends Bright_Element {
       if (realtime_mode >= realtime_modes_total) realtime_mode = 0;
     }
 
+	int get_realtime_mode() {
+		return realtime_mode;
+	}
+
     void set_base_color_hsb(float range, float h, float s, float b) {
         processing_app.colorMode(processing_app.HSB, 255);
         processing_app.println("set color - hsb range " + range + ": " + h + ", " + s  + ", " + b);
@@ -110,90 +114,6 @@ public class Freq_Bands_Input extends Bright_Element {
       }
        return freq_bands_amp;		
 	}
-
-
-	public ArrayList<Byte> calculate_bands_amplitude() {
-      fft.forward(audio_input.mix);
-      float start_freq = 0;
-      float end_freq = 0;
-      for (int i = 0; i < freq_bands.size(); i++) {
-        start_freq = end_freq;
-        end_freq = freq_bands.get(i);
-        float freq_amplitude = fft.calcAvg(start_freq, end_freq) * freq_bands_amp_offset.get(i);  
-        freq_amplitude = freq_amplitude / (amplitude_bandwidth*amplitude_bandwidth_mult); 
-        freq_bands_amp.set(i, freq_amplitude);
-      }
-       return get_send_led_realtime_data();
-    }
-
-    ArrayList<Byte> get_send_led_realtime_data() {
-      if (realtime_mode == 0) {
-		processing_app.println("get_send_led_realtime_data: reatlime mode 0 ");
-        if (display_linked) display_link.display_realtime_freq_bands(get_led_vals_amp2hue());
-        return get_led_vals_amp2hue();
-      }
-      else {
-		processing_app.println("get_send_led_realtime_data: reatlime mode 1 ");
-        if (display_linked) display_link.display_realtime_freq_bands(get_led_vals_amp2bright_sat(200, 35));
-        return get_led_vals_amp2bright(0);
-      }
-    }
-    
-    ArrayList<Float> get_freq_bands_amplitude() {
-      ArrayList<Float> freq_bands_float = new ArrayList<Float>();
-      for (int i = 0; i < freq_bands_amp.size() ; i ++) {
-        freq_bands_float.add(freq_bands_amp.get(i));
-      }
-      return freq_bands_float;
-    }
-
-    ArrayList<Byte> get_led_vals_amp2bright(int min_bright) {
-      ArrayList<Byte> led_bytes = new ArrayList<Byte>();
-      for (int i = 0; i < freq_bands_amp.size() ; i ++) {
-        processing_app.colorMode(processing_app.HSB, 255);
-        float _h = rgb_base_color_array[0]; 
-        float _s = rgb_base_color_array[1]; 
-        float _b = processing_app.map((rgb_base_color_array[2] * freq_bands_amp.get(i)), 0f, 255f, min_bright, 255f); 
-        int temp_color = processing_app.color(_h, _s, _b );
-  
-        processing_app.colorMode(processing_app.RGB, 255);
-        led_bytes.add((byte)(processing_app.map((temp_color >> 16 & 0xFF), 0, 255, 0, 127)));
-        led_bytes.add((byte)(processing_app.map((temp_color >> 8 & 0xFF), 0, 255, 0, 127)));
-        led_bytes.add((byte)(processing_app.map((temp_color & 0xFF), 0, 255, 0, 127)));
-      }
-      return led_bytes;
-    }      
-
-    ArrayList<Byte> get_led_vals_amp2bright_sat(int min_bright,int min_sat) {
-      ArrayList<Byte> led_bytes = new ArrayList<Byte>();
-      for (int i = 0; i < freq_bands_amp.size() ; i ++) {
-        processing_app.colorMode(processing_app.HSB, 255, 255, 255);
-        float _h = rgb_base_color_array[0]; 
-        float _s = processing_app.map((rgb_base_color_array[1] * freq_bands_amp.get(i)), 0f, 255f, min_sat, 255f); 
-        float _b = processing_app.map((rgb_base_color_array[2] * freq_bands_amp.get(i)), 0f, 255f, min_bright, 255f); 
-        int temp_color = processing_app.color(_h, _s, _b);
-		
-        processing_app.colorMode(processing_app.RGB, 255);
-        led_bytes.add((byte)(processing_app.map((temp_color >> 16 & 0xFF), 0, 255, 0, 127)));
-        led_bytes.add((byte)(processing_app.map((temp_color >> 8 & 0xFF), 0, 255, 0, 127)));
-        led_bytes.add((byte)(processing_app.map((temp_color & 0xFF), 0, 255, 0, 127)));
-      }
-      return led_bytes;
-    }      
-
-    ArrayList<Byte> get_led_vals_amp2hue() {
-      ArrayList<Byte> led_bytes = new ArrayList<Byte>();
-      for (int i = 0; i < freq_bands_amp.size() ; i ++) {
-        int temp_hue = 220 + (int)(freq_bands_amp.get(i)*160);
-        processing_app.colorMode(processing_app.HSB, 360, 100, 100);
-        int temp_color = processing_app.color(temp_hue, 100, 100);
-        processing_app.colorMode(processing_app.RGB, 255);
-        led_bytes.add((byte)(processing_app.map((temp_color >> 16 & 0xFF), 0, 255, 0, 127)));
-        led_bytes.add((byte)(processing_app.map((temp_color >> 8 & 0xFF), 0, 255, 0, 127)));
-        led_bytes.add((byte)(processing_app.map((temp_color & 0xFF), 0, 255, 0, 127)));
-      }       
-      return led_bytes;
-    }
 
     void stop() {
         audio_input.close();

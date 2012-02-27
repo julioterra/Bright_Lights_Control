@@ -8,8 +8,10 @@ public class Bright_Controller extends Bright_Element {
     int interaction_mode = 0;
     boolean lights_on = false;
     int slider_range = 1000;
-    int mode_realtime = 4;
+    final int MODE_REALTIME = 4;
     
+    float hsb_base[] = new float[3];
+	
     // holds hsb values and previous hsb values
     int hsb_msg[] = {0,0,0};
     int previous_hsb_msg[] = {0,0,0};
@@ -26,6 +28,7 @@ public class Bright_Controller extends Bright_Element {
     Physical_Devices_Output physical_output;
     Display_Box display_box;
     Freq_Bands_Input freq_bands;
+    ArrayList<Float> freq_bands_amp = new ArrayList<Float>();
     
     HashMap<String, Physical_Devices_Output>  outputs;
 
@@ -69,18 +72,16 @@ public class Bright_Controller extends Bright_Element {
 	}
 
 
-	void draw() {
-		display_box.display_box();
-        
-        if(get_interaction_mode() == 4) {
-            ArrayList<Byte> realtime_msg = freq_bands.calculate_bands_amplitude();  
-			if (is_on()) {
-	            physical_output.send_serial_msg_arraylist(MODE_MSG_realtime, realtime_msg);
-			}
-        }
 
-        else if(get_interaction_mode() == 5) {
-            freq_bands.calculate_bands_amplitude();  
+	void draw() {
+		display_box.display_box();        
+
+        if(interaction_mode >= MODE_REALTIME) {
+            freq_bands_amp = freq_bands.get_bands_amplitude(); 
+			if (is_on()) {
+	            physical_output.send_serial_msg_arraylist(MODE_MSG_realtime, get_realtime_physical());
+			}
+ 			display_box.display_realtime_freq_bands(get_realtime_display());
         }
 	}
 
@@ -98,7 +99,7 @@ public class Bright_Controller extends Bright_Element {
     
         // this is a status message and the size is 21 without the header byte
         if (false) {
-    //    if (_msg_type == STATUS_MSG && _msg_body.size() >= 20 && interaction_mode != mode_realtime) {
+    //    if (_msg_type == STATUS_MSG && _msg_body.size() >= 20 && interaction_mode != MODE_REALTIME) {
             int current_index = 0;
             byte[] temp_bytes = {0,0,0};
     
@@ -223,7 +224,7 @@ public class Bright_Controller extends Bright_Element {
               case 3:
                   physical_output.send_serial_msg(MODE_MSG_scroll, convert_array_int_to_byte(scroll_msg));
                   break;
-              case 4:
+              case MODE_REALTIME:
                   byte empty_array[] = {(byte)(0), MSG_END};
                   physical_output.send_serial_msg(MODE_MSG_realtime, empty_array);
                   break;
@@ -246,8 +247,8 @@ public class Bright_Controller extends Bright_Element {
       if (id.equals("hue_slider")) {
             hsb_msg[0] = (int)value;
             if (check_array_state_change(hsb_msg, previous_hsb_msg)) {
-                freq_bands.set_base_color_hsb(slider_range, hsb_msg[0],hsb_msg[1],hsb_msg[2]);
-                if (lights_on && interaction_mode != mode_realtime) {
+                set_base_color_hsb(slider_range, hsb_msg[0],hsb_msg[1],hsb_msg[2]);
+                if (lights_on && interaction_mode != MODE_REALTIME) {
                 processing_app.println("sending HSB msg");
                     previous_hsb_msg = update_previous_array(hsb_msg, previous_hsb_msg);
                     if (slider_range != 127) physical_output.send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
@@ -259,8 +260,8 @@ public class Bright_Controller extends Bright_Element {
         else if (id.equals("sat_slider")) {
             hsb_msg[1] = (int)value;
             if (check_array_state_change(hsb_msg, previous_hsb_msg)) {
-                freq_bands.set_base_color_hsb(slider_range, hsb_msg[0],hsb_msg[1],hsb_msg[2]);
-                if (lights_on && interaction_mode != mode_realtime) {
+                set_base_color_hsb(slider_range, hsb_msg[0],hsb_msg[1],hsb_msg[2]);
+                if (lights_on && interaction_mode != MODE_REALTIME) {
                     previous_hsb_msg = update_previous_array(hsb_msg, previous_hsb_msg);
                     if (slider_range != 127) physical_output.send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
                     else physical_output.send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte(hsb_msg));
@@ -271,8 +272,8 @@ public class Bright_Controller extends Bright_Element {
         else if (id.equals("bright_slider")) {
             hsb_msg[2] = (int)value;
             if (check_array_state_change(hsb_msg, previous_hsb_msg)) {
-                freq_bands.set_base_color_hsb(slider_range, hsb_msg[0],hsb_msg[1],hsb_msg[2]);
-                if (lights_on && interaction_mode != mode_realtime) {
+                set_base_color_hsb(slider_range, hsb_msg[0],hsb_msg[1],hsb_msg[2]);
+                if (lights_on && interaction_mode != MODE_REALTIME) {
                     previous_hsb_msg = update_previous_array(hsb_msg, previous_hsb_msg);
                     if (slider_range != 127) physical_output.send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte_full(hsb_msg));
                     else physical_output.send_serial_msg(SET_MSG_hsb, convert_array_int_to_byte(hsb_msg));
@@ -391,5 +392,104 @@ public class Bright_Controller extends Bright_Element {
         return new_int;      
 
     }
+
+	
+	////////////////////////////////////
+	////////////////////////////////////
+	////////////////////////////////////
+	////////////////////////////////////
+	////////////////////////////////////
+	// Freq_Band control functions
+	////////////////////////////////////
+	////////////////////////////////////
+	////////////////////////////////////
+
+    void set_base_color_hsb(float range, float h, float s, float b) {
+        processing_app.colorMode(processing_app.HSB, 255);
+        processing_app.println("set color - hsb range " + range + ": " + h + ", " + s  + ", " + b);
+        hsb_base[0] = processing_app.map(h, 0f, range, 0f, 255f);
+        hsb_base[1] = processing_app.map(s, 0f, range, 0f, 255f);
+        hsb_base[2] = processing_app.map(b, 0f, range, 0f, 255f);
+    }
+	
+	ArrayList<Byte> get_realtime_physical() {
+      if (freq_bands.get_realtime_mode() == 0) {
+		processing_app.println("physical data: reatlime mode 0 ");
+        return get_led_vals_amp2hue();
+      }
+      else {
+		processing_app.println("physical data: reatlime mode 1 ");
+        return get_led_vals_amp2bright(0);
+      }
+    }
+
+	ArrayList<Byte> get_realtime_display() {
+      if (freq_bands.get_realtime_mode() == 0) {
+		processing_app.println("display data: reatlime mode 0 ");
+        return get_led_vals_amp2hue();
+      }
+      else {
+		processing_app.println("display data: reatlime mode 1 ");
+        return get_led_vals_amp2bright_sat(200, 35);
+      }
+    }
+
+    
+    ArrayList<Float> get_freq_bands_amplitude() {
+      ArrayList<Float> freq_bands_float = new ArrayList<Float>();
+      for (int i = 0; i < freq_bands_amp.size() ; i ++) {
+        freq_bands_float.add(freq_bands_amp.get(i));
+      }
+      return freq_bands_float;
+    }
+
+    ArrayList<Byte> get_led_vals_amp2bright(int min_bright) {
+      ArrayList<Byte> led_bytes = new ArrayList<Byte>();
+      for (int i = 0; i < freq_bands_amp.size() ; i ++) {
+        processing_app.colorMode(processing_app.HSB, 255);
+        float _h = hsb_base[0]; 
+        float _s = hsb_base[1]; 
+        float _b = processing_app.map((hsb_base[2] * freq_bands_amp.get(i)), 0f, 255f, min_bright, 255f); 
+        int temp_color = processing_app.color(_h, _s, _b );
+  
+        processing_app.colorMode(processing_app.RGB, 255);
+        led_bytes.add((byte)(processing_app.map((temp_color >> 16 & 0xFF), 0, 255, 0, 127)));
+        led_bytes.add((byte)(processing_app.map((temp_color >> 8 & 0xFF), 0, 255, 0, 127)));
+        led_bytes.add((byte)(processing_app.map((temp_color & 0xFF), 0, 255, 0, 127)));
+      }
+      return led_bytes;
+    }      
+
+    ArrayList<Byte> get_led_vals_amp2bright_sat(int min_bright,int min_sat) {
+      ArrayList<Byte> led_bytes = new ArrayList<Byte>();
+      for (int i = 0; i < freq_bands_amp.size() ; i ++) {
+        processing_app.colorMode(processing_app.HSB, 255, 255, 255);
+        float _h = hsb_base[0]; 
+        float _s = processing_app.map((hsb_base[1] * freq_bands_amp.get(i)), 0f, 255f, min_sat, 255f); 
+        float _b = processing_app.map((hsb_base[2] * freq_bands_amp.get(i)), 0f, 255f, min_bright, 255f); 
+        int temp_color = processing_app.color(_h, _s, _b);
+		
+        processing_app.colorMode(processing_app.RGB, 255);
+        led_bytes.add((byte)(processing_app.map((temp_color >> 16 & 0xFF), 0, 255, 0, 127)));
+        led_bytes.add((byte)(processing_app.map((temp_color >> 8 & 0xFF), 0, 255, 0, 127)));
+        led_bytes.add((byte)(processing_app.map((temp_color & 0xFF), 0, 255, 0, 127)));
+      }
+      return led_bytes;
+    }      
+
+    ArrayList<Byte> get_led_vals_amp2hue() {
+      ArrayList<Byte> led_bytes = new ArrayList<Byte>();
+      for (int i = 0; i < freq_bands_amp.size() ; i ++) {
+        int temp_hue = 220 + (int)(freq_bands_amp.get(i)*160);
+        processing_app.colorMode(processing_app.HSB, 360, 100, 100);
+        int temp_color = processing_app.color(temp_hue, 100, 100);
+        processing_app.colorMode(processing_app.RGB, 255);
+        led_bytes.add((byte)(processing_app.map((temp_color >> 16 & 0xFF), 0, 255, 0, 127)));
+        led_bytes.add((byte)(processing_app.map((temp_color >> 8 & 0xFF), 0, 255, 0, 127)));
+        led_bytes.add((byte)(processing_app.map((temp_color & 0xFF), 0, 255, 0, 127)));
+      }       
+      return led_bytes;
+    }
+    
 
 }
