@@ -76,26 +76,12 @@ public class Bright_Lights_Control extends PApplet implements BL_Constants {
 	}
     
     void draw () {
-        display_box_obj.display_box();
-        
-        if(controller.get_interaction_mode() == 4) {
-            ArrayList<Byte> realtime_msg = freq_bands_obj.calculate_bands_amplitude();  
-			if (controller.is_on()) {
-	            physical_output.send_serial_msg_arraylist(MODE_MSG_realtime, realtime_msg);
-			}
-        }
-
-        else if(controller.get_interaction_mode() == 5) {
-            freq_bands_obj.calculate_bands_amplitude();  
-        }
+		controller.draw();
     }
     
     void stop () {
-      println("getting ready to close shop.");
-      physical_output.stop();  
-      freq_bands_obj.stop();
-      println("closed minim.");
-      super.stop();  
+		controller.stop();
+		super.stop();  
     }
     
     

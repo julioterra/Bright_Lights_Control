@@ -31,7 +31,7 @@ public class Freq_Bands_Input extends Bright_Element {
   
     // constructor   
     public Freq_Bands_Input (PApplet _this_app, int _init_band_freq, float _init_freq_band_mult) {
-        minim = new Minim(_this_app);  
+        minim = new Minim(processing_app);  
         // initialize the audio input object
         audio_input = minim.getLineIn(Minim.STEREO, 512);
         // initialize the FFT object that has a time-domain buffer the same size as audio_input's sample buffer
@@ -97,7 +97,22 @@ public class Freq_Bands_Input extends Bright_Element {
       return freq_bands.size();
     }
 
-    ArrayList<Byte> calculate_bands_amplitude() {
+	public ArrayList<Float> get_bands_amplitude() {
+      fft.forward(audio_input.mix);
+      float start_freq = 0;
+      float end_freq = 0;
+      for (int i = 0; i < freq_bands.size(); i++) {
+        start_freq = end_freq;
+        end_freq = freq_bands.get(i);
+        float freq_amplitude = fft.calcAvg(start_freq, end_freq) * freq_bands_amp_offset.get(i);  
+        freq_amplitude = freq_amplitude / (amplitude_bandwidth*amplitude_bandwidth_mult); 
+        freq_bands_amp.set(i, freq_amplitude);
+      }
+       return freq_bands_amp;		
+	}
+
+
+	public ArrayList<Byte> calculate_bands_amplitude() {
       fft.forward(audio_input.mix);
       float start_freq = 0;
       float end_freq = 0;

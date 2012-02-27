@@ -45,11 +45,19 @@ public class Bright_Controller extends Bright_Element {
         display_box = _display_box;
     }
 
+	// void register_ouput(BL_Ouput new_output, BL_Model new_model) {
+	// 	
+	// }
+
+	// void register_input(BL_Ouput new_input, BL_Model new_model) {
+	// 	
+	// }
+
+
     //////////////
     // join all the input registration methods into a single one with a HashKey and names
     void register_input(Freq_Bands_Input _freq_bands) {
         freq_bands = _freq_bands;
-
     }
 
 	int get_interaction_mode() {
@@ -58,6 +66,28 @@ public class Bright_Controller extends Bright_Element {
 	
 	boolean is_on() {
 		return lights_on;
+	}
+
+
+	void draw() {
+		display_box.display_box();
+        
+        if(get_interaction_mode() == 4) {
+            ArrayList<Byte> realtime_msg = freq_bands.calculate_bands_amplitude();  
+			if (is_on()) {
+	            physical_output.send_serial_msg_arraylist(MODE_MSG_realtime, realtime_msg);
+			}
+        }
+
+        else if(get_interaction_mode() == 5) {
+            freq_bands.calculate_bands_amplitude();  
+        }
+	}
+
+	void stop() {
+	  physical_output.stop();  
+      freq_bands.stop();
+      processing_app.println("closed minim.");
 	}
 
     //////////////////////////////////////////////////////
