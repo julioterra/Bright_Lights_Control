@@ -18,8 +18,8 @@ public class Bright_Lights_Control extends PApplet implements BL_Constants {
 	int interaction_mode = 0;
 
 	// audio freq analysis variables 
-	float freq_band_mult_init = 2.5;
-	int setup_band_freq_init = 20;
+	float freqbands_bandwidth = 2.5;
+	int setup_start_frequency = 20;
 	// float freq_amplitude_range_init =150f;
 	float [] freq_amp_offset_init = {1f,1f,1f,3f,5f,8f,14f,20f};
 
@@ -34,14 +34,15 @@ public class Bright_Lights_Control extends PApplet implements BL_Constants {
         // physical_output.connect_serial("/dev/tty.usbserial-A6008myi");
         physical_output.connect_serial("/dev/tty.BlueJulio-M1");
     
-        freq_bands_obj = new Freq_Bands_Input(this, setup_band_freq_init, freq_band_mult_init);
+        freq_bands_obj = new Freq_Bands_Input();
+		freq_bands_obj.init_freq_bands_array(setup_start_frequency, freqbands_bandwidth);
         freq_bands_obj.init_freq_bands_amp_offset(freq_amp_offset_init);
     
         user_interface = new User_Interface_Input();
         controller = new Bright_Controller(user_interface);     
         Bright_Element.register_controller(controller);
         
-		PVector number_of_lights = new PVector(freq_bands_obj.get_number_of_bands(), 1);
+		PVector number_of_lights = new PVector(freq_bands_obj.get_realtime_data_array_size(), 1);
         display_box_obj = new Display_Box(number_of_lights);    
         display_box_obj.init_size(600, 250);    
         display_box_obj.init_pos(100, 140);
@@ -49,8 +50,6 @@ public class Bright_Lights_Control extends PApplet implements BL_Constants {
         controller.register_physical_output(physical_output); 
         controller.register_display_output(display_box_obj);
         controller.register_input(freq_bands_obj);
-        
-        freq_bands_obj.init_connect_display_link(display_box_obj);
         
 		// device_states = new BModel_Handler();
 		BModel_HandlerXML device_handler = new BModel_HandlerXML("BModel_TempPhysicalBW.xml");
@@ -94,7 +93,7 @@ public class Bright_Lights_Control extends PApplet implements BL_Constants {
     }
     
     void keyPressed() {
-        freq_bands_obj.toggle_realtime_mode();
+        controller.toggle_realtime_mode();
     }
 
 }

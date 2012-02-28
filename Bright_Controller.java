@@ -9,6 +9,8 @@ public class Bright_Controller extends Bright_Element {
     boolean lights_on = false;
     int slider_range = 1000;
     final int MODE_REALTIME = 4;
+    int realtime_mode = 1;
+    int realtime_mode_total = 2;
     
     float hsb_base[] = new float[3];
 	
@@ -71,13 +73,11 @@ public class Bright_Controller extends Bright_Element {
 		return lights_on;
 	}
 
-
-
 	void draw() {
 		display_box.display_box();        
 
         if(interaction_mode >= MODE_REALTIME) {
-            freq_bands_amp = freq_bands.get_bands_amplitude(); 
+            freq_bands_amp = freq_bands.get_realtime_data(); 
 			if (is_on()) {
 	            physical_output.send_serial_msg_arraylist(MODE_MSG_realtime, get_realtime_physical());
 			}
@@ -315,6 +315,11 @@ public class Bright_Controller extends Bright_Element {
         }
     }
 
+    public void toggle_realtime_mode() {
+      realtime_mode ++;
+      if (realtime_mode >= realtime_mode_total) realtime_mode = 0;
+    }
+
 	int int2byte127_r8 = Integer.parseInt("00000000" + "00000000" + "01111111" + "00000000", 2);
 	int int2byte127_r1 = Integer.parseInt("00000000" + "00000000" + "00000000" + "11111110", 2);
 	int int2byte127_l7 = Integer.parseInt("00000000" + "00000000" + "00000000" + "00000001", 2);
@@ -413,7 +418,7 @@ public class Bright_Controller extends Bright_Element {
     }
 	
 	ArrayList<Byte> get_realtime_physical() {
-      if (freq_bands.get_realtime_mode() == 0) {
+      if (realtime_mode == 0) {
 		processing_app.println("physical data: reatlime mode 0 ");
         return get_led_vals_amp2hue();
       }
@@ -424,7 +429,7 @@ public class Bright_Controller extends Bright_Element {
     }
 
 	ArrayList<Byte> get_realtime_display() {
-      if (freq_bands.get_realtime_mode() == 0) {
+      if (realtime_mode == 0) {
 		processing_app.println("display data: reatlime mode 0 ");
         return get_led_vals_amp2hue();
       }
